@@ -46,6 +46,7 @@ dependencies:
   hive_flutter:
   path_provider:
   go_router:
+  flutter_bloc:
 
 
 dev_dependencies:

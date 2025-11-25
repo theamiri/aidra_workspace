@@ -1,7 +1,7 @@
 import 'package:ampere/core/api/api_client.dart';
 import 'package:ampere/core/api/api_endpoints.dart';
 import 'package:ampere/core/utils/error_handler.dart';
-import 'package:ampere/features/authentication/data/models/session_response_model.dart';
+import 'package:ampere/features/authentication/data/models/session_model.dart';
 import 'package:ampere/features/authentication/data/models/signin_request_model.dart';
 import 'package:ampere/features/authentication/data/models/user_model.dart';
 
@@ -16,14 +16,14 @@ class RemoteAuthDataSource {
   /// 
   /// [signInRequest] - The sign-in request containing email and password
   /// 
-  /// Returns [SessionResponseModel?] containing access token and refresh token only
+  /// Returns [SessionModel?] containing access token and refresh token only
   /// Returns null if response data is empty
   /// Note: User information must be fetched separately using getCurrentUser()
   /// 
   /// Throws [AuthenticationException] if authentication fails
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionResponseModel?> signIn(SignInRequestModel signInRequest) async {
+  Future<SessionModel?> signIn(SignInRequestModel signInRequest) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.login,
@@ -35,7 +35,7 @@ class RemoteAuthDataSource {
       }
 
       final jsonData = response.data as Map<String, dynamic>;
-      return SessionResponseModel.fromJson(jsonData);
+      return SessionModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'sign in');
     }

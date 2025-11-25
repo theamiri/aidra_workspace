@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:ampere/core/storage/secure_storage.dart';
 import 'package:ampere/core/utils/error_handler.dart';
-import 'package:ampere/features/authentication/data/models/session_response_model.dart';
+import 'package:ampere/features/authentication/data/models/session_model.dart';
 import 'package:ampere/features/authentication/data/models/signin_request_model.dart';
 import 'package:ampere/features/authentication/data/models/user_model.dart';
 
@@ -28,7 +28,7 @@ class LocalAuthDataSource {
   /// [session] - The session response to store (contains only tokens)
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSessionResponse(SessionResponseModel session) async {
+  Future<void> storeSessionResponse(SessionModel session) async {
     try {
       final jsonString = jsonEncode(session.toJson());
       await _sessionStorage.save(value: jsonString);
@@ -39,10 +39,10 @@ class LocalAuthDataSource {
 
   /// Fetch stored session response
   /// 
-  /// Returns [SessionResponseModel] if found, null otherwise
+  /// Returns [SessionModel] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SessionResponseModel?> getSessionResponse() async {
+  Future<SessionModel?> getSessionResponse() async {
     try {
       final jsonString = await _sessionStorage.get();
       if (jsonString == null || jsonString.toString().isEmpty) {
@@ -50,7 +50,7 @@ class LocalAuthDataSource {
       }
 
       final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
-      return SessionResponseModel.fromJson(jsonMap);
+      return SessionModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get session response');
     }
@@ -162,7 +162,6 @@ class LocalAuthDataSource {
     try {
       await Future.wait([
         clearSessionResponse(),
-        clearSignInCredentials(),
         clearUser(),
       ]);
     } catch (e, stackTrace) {
