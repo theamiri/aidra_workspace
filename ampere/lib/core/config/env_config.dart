@@ -12,18 +12,12 @@ class EnvConfig {
   static String get environment => dotenv.get('ENV');
 
   /// Get API base URL
-  static String get apiBaseUrl =>
-      dotenv.get('API_BASE_URL');
+  static String get apiBaseUrl => dotenv.get('API_BASE_URL');
 
   /// Get app name
-  static String get appName =>
-      dotenv.get('APP_NAME');
+  static String get appName => dotenv.get('APP_NAME');
 
-   /// Get app Version
-  static String get appVersion =>
-      dotenv.get('APP_VERSION');
-
-  /// Check if debug banner should be shown
+  /// Check if debug banner should be shownenv
   static bool get showDebugBanner {
     final value = dotenv.get('SHOW_DEBUG_BANNER');
     return value.toLowerCase() == 'true';
@@ -38,6 +32,12 @@ class EnvConfig {
   static bool get isDevelopment =>
       environment.toLowerCase() == 'development' ||
       environment.toLowerCase() == 'dev';
+
+  /// Get environment display name
+  static String get environmentDisplayName {
+    if (isProduction) return '';
+    return ' [${environment.toUpperCase()}]';
+  }
 
   /// Get all environment variables (for debugging)
   static Map<String, String> get all => dotenv.env;
