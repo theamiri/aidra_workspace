@@ -6,7 +6,7 @@ final rootNavigatorKey = GlobalKey<NavigatorState>();
 
 RouterConfig<Object> router() => GoRouter(
   navigatorKey: rootNavigatorKey,
-    initialLocation: Routes.splash.route,
+    initialLocation: Routes.signIn.route,
     routes: <RouteBase>[
       Routes.splash.build,
       Routes.signIn.build,

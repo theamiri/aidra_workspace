@@ -2,69 +2,50 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter (Dev)",
+      "name": "Development",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "preLaunchTask": "Set Environment: Dev",
-      "args": [
-        "--dart-define=ENVIRONMENT=dev"
-      ]
+      "preLaunchTask": "Switch to Development Environment"
     },
     {
-      "name": "Flutter (Prod)",
+      "name": "Production",
       "request": "launch",
       "type": "dart",
       "program": "lib/main.dart",
-      "preLaunchTask": "Set Environment: Prod",
-      "args": [
-        "--dart-define=ENVIRONMENT=prod"
-      ]
+      "preLaunchTask": "Switch to Production Environment"
     },
     {
-      "name": "Flutter (Dev) - Profile",
+      "name": "Development (Current Device)",
       "request": "launch",
       "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Switch to Development Environment",
+      "deviceId": "${command:pickDevice}"
+    },
+    {
+      "name": "Production (Current Device)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Switch to Production Environment",
+      "deviceId": "${command:pickDevice}"
+    },
+    {
+      "name": "Development (Profile Mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
       "flutterMode": "profile",
-      "program": "lib/main.dart",
-      "preLaunchTask": "Set Environment: Dev",
-      "args": [
-        "--dart-define=ENVIRONMENT=dev"
-      ]
+      "preLaunchTask": "Switch to Development Environment"
     },
     {
-      "name": "Flutter (Prod) - Profile",
+      "name": "Production (Release Mode)",
       "request": "launch",
       "type": "dart",
-      "flutterMode": "profile",
       "program": "lib/main.dart",
-      "preLaunchTask": "Set Environment: Prod",
-      "args": [
-        "--dart-define=ENVIRONMENT=prod"
-      ]
-    },
-    {
-      "name": "Flutter (Dev) - Release",
-      "request": "launch",
-      "type": "dart",
       "flutterMode": "release",
-      "program": "lib/main.dart",
-      "preLaunchTask": "Set Environment: Dev",
-      "args": [
-        "--dart-define=ENVIRONMENT=dev"
-      ]
-    },
-    {
-      "name": "Flutter (Prod) - Release",
-      "request": "launch",
-      "type": "dart",
-      "flutterMode": "release",
-      "program": "lib/main.dart",
-      "preLaunchTask": "Set Environment: Prod",
-      "args": [
-        "--dart-define=ENVIRONMENT=prod"
-      ]
+      "preLaunchTask": "Switch to Production Environment"
     }
   ]
 }
-

@@ -45,24 +45,24 @@ abstract class AuthRepository {
   /// Throws [NetworkException] if network connection fails
   Future<void> signOut();
 
-  /// Store session response locally
+  /// Store session locally
   /// 
-  /// [session] - The session response to store
+  /// [session] - The session to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSessionResponse(SessionEnitity session);
+  Future<void> storeSession(SessionEnitity session);
 
-  /// Get stored session response
+  /// Get stored session
   /// 
   /// Returns [SessionEnitity?] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SessionEnitity?> getStoredSessionResponse();
+  Future<SessionEnitity?> getStoredSession();
 
-  /// Clear stored session response
+  /// Clear stored session
   /// 
   /// Throws [CacheException] if deletion fails
-  Future<void> clearSessionResponse();
+  Future<void> clearSession();
 
   /// Store sign-in credentials locally
   /// 
@@ -95,7 +95,7 @@ abstract class AuthRepository {
   /// Returns [UserEntity?] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<UserEntity?> getStoredUser();
+  Future<UserEntity?> getUser();
 
   /// Clear stored user information
   /// 

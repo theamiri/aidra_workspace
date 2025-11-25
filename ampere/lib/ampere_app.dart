@@ -1,4 +1,5 @@
 import 'package:ampere/core/constants/app_strings.dart';
+import 'package:ampere/core/router/router.dart';
 import 'package:flutter/material.dart';
 
 class AmpereApp extends StatelessWidget {
@@ -6,18 +7,10 @@ class AmpereApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
+      routerConfig: router(),
       title: AppConstants.appName,
       debugShowCheckedModeBanner: !AppConstants.isProduction,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: Scaffold(
-        body: Center(
-          child: Text(AppConstants.appName),
-        ),
-      ),
     );
   }
 }

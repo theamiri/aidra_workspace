@@ -2,6 +2,17 @@ import 'package:ampere/core/api/api_client.dart';
 import 'package:ampere/core/api/logging_interceptor.dart';
 import 'package:ampere/core/config/env_config.dart';
 import 'package:ampere/core/storage/secure_storage.dart';
+import 'package:ampere/features/authentication/data/data_sources/local_auth_data_source.dart';
+import 'package:ampere/features/authentication/data/data_sources/remote_auth_data_source.dart';
+import 'package:ampere/features/authentication/data/repositories/auth_repository_impl.dart';
+import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:ampere/features/authentication/domain/usecases/check_authentication_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/clear_credentials_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/get_credentials_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/refresh_token_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/save_credentials_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/signin_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/signout_usecase.dart';
 import 'package:get_it/get_it.dart';
 
 
@@ -16,6 +27,31 @@ class Injection {
   /// Gets a SecureStorage instance for a specific key
   /// [key] - The storage key identifier
   static SecureStorage secureStorage(String key) => SecureStorage(key: key);
+
+  // Authentication Dependencies
+  /// Gets the AuthRepository instance
+  static AuthRepository get authRepository => getIt<AuthRepository>();
+
+  /// Gets the SignInUseCase instance
+  static SignInUseCase get signInUseCase => getIt<SignInUseCase>();
+
+  /// Gets the SignOutUseCase instance
+  static SignOutUseCase get signOutUseCase => getIt<SignOutUseCase>();
+
+  /// Gets the CheckAuthenticationUseCase instance
+  static CheckAuthenticationUseCase get checkAuthenticationUseCase => getIt<CheckAuthenticationUseCase>();
+
+  /// Gets the RefreshTokenUseCase instance
+  static RefreshTokenUseCase get refreshTokenUseCase => getIt<RefreshTokenUseCase>();
+
+  /// Gets the SaveCredentialsUseCase instance
+  static SaveCredentialsUseCase get saveCredentialsUseCase => getIt<SaveCredentialsUseCase>();
+
+  /// Gets the GetCredentialsUseCase instance
+  static GetCredentialsUseCase get getCredentialsUseCase => getIt<GetCredentialsUseCase>();
+
+  /// Gets the ClearCredentialsUseCase instance
+  static ClearCredentialsUseCase get clearCredentialsUseCase => getIt<ClearCredentialsUseCase>();
 }
 
 Future<void> initializeDependencies() async {
@@ -67,19 +103,61 @@ void _registerApiServices() {
 /// Registers data sources
 /// Data sources handle data fetching from remote APIs or local storage
 void _registerDataSources() {
+  // Authentication Data Sources
+  getIt.registerLazySingleton<LocalAuthDataSource>(
+    () => LocalAuthDataSource(),
+  );
 
+  getIt.registerLazySingleton<RemoteAuthDataSource>(
+    () => RemoteAuthDataSource(getIt<ApiClient>()),
+  );
 }
 
 /// Registers repositories
 /// Repositories combine remote and local data sources
 void _registerRepositories() {
-
+  // Authentication Repository
+  getIt.registerLazySingleton<AuthRepository>(
+    () => AuthRepositoryImpl(
+      remoteDataSource: getIt<RemoteAuthDataSource>(),
+      localDataSource: getIt<LocalAuthDataSource>(),
+    ),
+  );
 }
 
 /// Registers use cases
 /// Use cases contain business logic and are used by the presentation layer
 void _registerUseCases() {
+  final authRepository = getIt<AuthRepository>();
 
+  // Authentication Use Cases
+  getIt.registerLazySingleton<SignInUseCase>(
+    () => SignInUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<SignOutUseCase>(
+    () => SignOutUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<CheckAuthenticationUseCase>(
+    () => CheckAuthenticationUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<RefreshTokenUseCase>(
+    () => RefreshTokenUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<SaveCredentialsUseCase>(
+    () => SaveCredentialsUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<GetCredentialsUseCase>(
+    () => GetCredentialsUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<ClearCredentialsUseCase>(
+    () => ClearCredentialsUseCase(authRepository),
+  );
 }
 
 Future<void> resetDependencies() async {

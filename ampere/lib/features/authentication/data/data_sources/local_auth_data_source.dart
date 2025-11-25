@@ -6,7 +6,7 @@ import 'package:ampere/features/authentication/data/models/res_model/session_mod
 import 'package:ampere/features/authentication/data/models/res_model/user_model.dart';
 
 /// Local data source for authentication data
-/// Handles storing and fetching session responses and sign-in credentials
+/// Handles storing and fetching session and sign-in credentials
 class LocalAuthDataSource {
   // Storage keys
   static const String _sessionResponseKey = 'session_response';
@@ -23,9 +23,9 @@ class LocalAuthDataSource {
         _credentialsStorage = SecureStorage(key: _signInCredentialsKey),
         _userStorage = SecureStorage(key: _userKey);
 
-  /// Store session response (access token and refresh token)
+  /// Store session (access token and refresh token)
   /// 
-  /// [session] - The session response to store (contains only tokens)
+  /// [session] - The session to store (contains only tokens)
   /// 
   /// Throws [CacheException] if storage fails
   Future<void> storeSession(SessionEnitityModel session) async {
@@ -33,11 +33,11 @@ class LocalAuthDataSource {
       final jsonString = jsonEncode(session.toJson());
       await _sessionStorage.save(value: jsonString);
     } catch (e, stackTrace) {
-      ErrorHandler.handleLocalError(e, stackTrace, 'store session response');
+      ErrorHandler.handleLocalError(e, stackTrace, 'store session');
     }
   }
 
-  /// Fetch stored session response
+  /// Fetch stored session
   /// 
   /// Returns [SessionEnitityModel] if found, null otherwise
   /// 
@@ -52,18 +52,18 @@ class LocalAuthDataSource {
       final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
       return SessionEnitityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
-      ErrorHandler.handleLocalError(e, stackTrace, 'get session response');
+      ErrorHandler.handleLocalError(e, stackTrace, 'get session');
     }
   }
 
-  /// Clear stored session response
+  /// Clear stored session
   /// 
   /// Throws [CacheException] if deletion fails
   Future<void> clearSession() async {
     try {
       await _sessionStorage.delete();
     } catch (e, stackTrace) {
-      ErrorHandler.handleLocalError(e, stackTrace, 'clear session response');
+      ErrorHandler.handleLocalError(e, stackTrace, 'clear session');
     }
   }
 

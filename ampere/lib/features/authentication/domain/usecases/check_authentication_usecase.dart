@@ -27,7 +27,7 @@ class CheckAuthenticationUseCase implements UseCase<UserEntity, NoParams> {
       }
 
       // Try to get stored user first
-      final storedUser = await _repository.getStoredUser();
+      final storedUser = await _repository.getUser();
       if (storedUser != null) {
         return Right(storedUser);
       }
