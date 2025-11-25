@@ -1,19 +1,17 @@
 import 'package:equatable/equatable.dart';
-import 'package:ampere/features/authentication/domain/entities/user.dart';
 
-/// Session response entity containing authentication tokens and user information
+/// Session response entity containing authentication tokens
+/// Note: User information is fetched separately via the current user endpoint
 class SessionResponse extends Equatable {
-  final String accessToken;
-  final String refreshToken;
-  final User user;
+  final String? accessToken;
+  final String? refreshToken;
 
   const SessionResponse({
-    required this.accessToken,
-    required this.refreshToken,
-    required this.user,
+    this.accessToken,
+    this.refreshToken,
   });
 
   @override
-  List<Object?> get props => [accessToken, refreshToken, user];
+  List<Object?> get props => [accessToken, refreshToken];
 }
 

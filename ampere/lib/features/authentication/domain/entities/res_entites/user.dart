@@ -3,32 +3,44 @@ import 'package:equatable/equatable.dart';
 
 /// User entity representing a user in the system
 class User extends Equatable {
-  final String email;
-  final String firstname;
-  final String lastname;
+  final int? id;
+  final String? email;
+  final String? firstname;
+  final String? lastname;
   final String? phoneNumber;
   final String? profilePictureUrl;
-  final Role role;
+  final int? clientId;
+  final int? siteId;
+  final Role? role; // Role is extracted from JWT token, not from current user endpoint
 
   const User({
-    required this.email,
-    required this.firstname,
-    required this.lastname,
+    this.id,
+    this.email,
+    this.firstname,
+    this.lastname,
     this.phoneNumber,
     this.profilePictureUrl,
-    required this.role,
+    this.clientId,
+    this.siteId,
+    this.role,
   });
 
   /// Get the full name of the user
-  String get fullName => '$firstname $lastname';
+  String? get fullName {
+    if (firstname == null && lastname == null) return null;
+    return '${firstname ?? ''} ${lastname ?? ''}'.trim();
+  }
 
   @override
   List<Object?> get props => [
+        id,
         email,
         firstname,
         lastname,
         phoneNumber,
         profilePictureUrl,
+        clientId,
+        siteId,
         role,
       ];
 }
