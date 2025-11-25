@@ -1,0 +1,51 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Development",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Switch to Development Environment"
+    },
+    {
+      "name": "Production",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Switch to Production Environment"
+    },
+    {
+      "name": "Development (Current Device)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Switch to Development Environment",
+      "deviceId": "${command:pickDevice}"
+    },
+    {
+      "name": "Production (Current Device)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Switch to Production Environment",
+      "deviceId": "${command:pickDevice}"
+    },
+    {
+      "name": "Development (Profile Mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "profile",
+      "preLaunchTask": "Switch to Development Environment"
+    },
+    {
+      "name": "Production (Release Mode)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "flutterMode": "release",
+      "preLaunchTask": "Switch to Production Environment"
+    }
+  ]
+}
