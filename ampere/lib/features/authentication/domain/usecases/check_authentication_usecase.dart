@@ -16,7 +16,7 @@ class CheckAuthenticationUseCase implements UseCase<UserEntity, NoParams> {
   Future<Either<Failure, UserEntity>> call(NoParams params) async {
     try {
       // First check if we have a stored session
-      final storedSession = await _repository.getStoredSessionResponse();
+      final storedSession = await _repository.getStoredSession();
       
       if (storedSession == null || 
           storedSession.accessToken == null || 

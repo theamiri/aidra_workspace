@@ -88,7 +88,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> storeSessionResponse(SessionEnitity session) async {
+  Future<void> storeSession(SessionEnitity session) async {
     try {
       final sessionModel = SessionEnitityModel.fromEntity(session);
       await _localDataSource.storeSession(sessionModel);
@@ -98,7 +98,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<SessionEnitity?> getStoredSessionResponse() async {
+  Future<SessionEnitity?> getStoredSession() async {
     try {
       return await _localDataSource.getSession();
     } catch (e) {
@@ -107,7 +107,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> clearSessionResponse() async {
+  Future<void> clearSession() async {
     try {
       await _localDataSource.clearSession();
     } catch (e) {

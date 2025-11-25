@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-/// Session response entity containing authentication tokens
+/// Session entity containing authentication tokens
 /// Note: User information is fetched separately via the current user endpoint
 class SessionEnitity extends Equatable {
   final String? accessToken;
