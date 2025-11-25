@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ampere/core/storage/hive_client.dart';
 import 'package:ampere/core/storage/secure_storage.dart';
 import 'package:ampere/core/utils/error_handler.dart';
 import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
@@ -11,22 +12,25 @@ class LocalAuthDataSource {
   // Storage keys
   static const String _sessionResponseKey = 'session_response';
   static const String _signInCredentialsKey = 'signin_credentials';
+  static const String _userBoxName = 'user_box';
   static const String _userKey = 'user';
 
-  // Secure storage instances
+  // Secure storage instances (for sensitive data)
   final SecureStorage _sessionStorage;
   final SecureStorage _credentialsStorage;
-  final SecureStorage _userStorage;
+
+  // Hive client for non-sensitive user data
+  final HiveClient<Map<String, dynamic>> _userHiveClient;
 
   LocalAuthDataSource()
-      : _sessionStorage = SecureStorage(key: _sessionResponseKey),
-        _credentialsStorage = SecureStorage(key: _signInCredentialsKey),
-        _userStorage = SecureStorage(key: _userKey);
+    : _sessionStorage = SecureStorage(key: _sessionResponseKey),
+      _credentialsStorage = SecureStorage(key: _signInCredentialsKey),
+      _userHiveClient = HiveClient<Map<String, dynamic>>(_userBoxName);
 
   /// Store session (access token and refresh token)
-  /// 
+  ///
   /// [session] - The session to store (contains only tokens)
-  /// 
+  ///
   /// Throws [CacheException] if storage fails
   Future<void> storeSession(SessionEnitityModel session) async {
     try {
@@ -38,9 +42,9 @@ class LocalAuthDataSource {
   }
 
   /// Fetch stored session
-  /// 
+  ///
   /// Returns [SessionEnitityModel] if found, null otherwise
-  /// 
+  ///
   /// Throws [CacheException] if retrieval fails
   Future<SessionEnitityModel?> getSession() async {
     try {
@@ -57,7 +61,7 @@ class LocalAuthDataSource {
   }
 
   /// Clear stored session
-  /// 
+  ///
   /// Throws [CacheException] if deletion fails
   Future<void> clearSession() async {
     try {
@@ -68,11 +72,13 @@ class LocalAuthDataSource {
   }
 
   /// Store sign-in request credentials (email and password)
-  /// 
+  ///
   /// [credentials] - The sign-in request to store
-  /// 
+  ///
   /// Throws [CacheException] if storage fails
-  Future<void> storeSignInCredentials(SignInRequestEntityModel credentials) async {
+  Future<void> storeSignInCredentials(
+    SignInRequestEntityModel credentials,
+  ) async {
     try {
       final jsonString = jsonEncode(credentials.toJson());
       await _credentialsStorage.save(value: jsonString);
@@ -82,9 +88,9 @@ class LocalAuthDataSource {
   }
 
   /// Fetch stored sign-in request credentials
-  /// 
+  ///
   /// Returns [SignInRequestEntityModel] if found, null otherwise
-  /// 
+  ///
   /// Throws [CacheException] if retrieval fails
   Future<SignInRequestEntityModel?> getSignInCredentials() async {
     try {
@@ -101,7 +107,7 @@ class LocalAuthDataSource {
   }
 
   /// Clear stored sign-in credentials
-  /// 
+  ///
   /// Throws [CacheException] if deletion fails
   Future<void> clearSignInCredentials() async {
     try {
@@ -112,61 +118,63 @@ class LocalAuthDataSource {
   }
 
   /// Store user information
-  /// 
+  ///
   /// [user] - The user model to store
-  /// 
+  ///
   /// Throws [CacheException] if storage fails
   Future<void> storeUser(UserEntityModel user) async {
     try {
-      final jsonString = jsonEncode(user.toJson());
-      await _userStorage.save(value: jsonString);
+      await _userHiveClient.init();
+      final userJson = user.toJson();
+      await _userHiveClient.put(_userKey, userJson);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'store user');
     }
   }
 
   /// Fetch stored user information
-  /// 
+  ///
   /// Returns [UserEntityModel] if found, null otherwise
-  /// 
+  ///
   /// Throws [CacheException] if retrieval fails
   Future<UserEntityModel?> getUser() async {
     try {
-      final jsonString = await _userStorage.get();
-      if (jsonString == null || jsonString.toString().isEmpty) {
+      await _userHiveClient.init();
+      final userJson = await _userHiveClient.get(_userKey);
+      if (userJson == null) {
         return null;
       }
 
-      final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
-      return UserEntityModel.fromJson(jsonMap);
+      return UserEntityModel.fromJson(userJson);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get user');
     }
   }
 
   /// Clear stored user information
-  /// 
+  ///
   /// Throws [CacheException] if deletion fails
   Future<void> clearUser() async {
     try {
-      await _userStorage.delete();
+      await _userHiveClient.init();
+      await _userHiveClient.delete(_userKey);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'clear user');
     }
   }
 
   /// Clear all authentication data (session, credentials, and user)
-  /// 
+  ///
   /// Throws [CacheException] if deletion fails
   Future<void> clearAll() async {
     try {
-      await Future.wait([
-        clearSession(),
-        clearUser(),
-      ]);
+      await Future.wait([clearSession(), clearUser()]);
     } catch (e, stackTrace) {
-      ErrorHandler.handleLocalError(e, stackTrace, 'clear all authentication data');
+      ErrorHandler.handleLocalError(
+        e,
+        stackTrace,
+        'clear all authentication data',
+      );
     }
   }
 }
-

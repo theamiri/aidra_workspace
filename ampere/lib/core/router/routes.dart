@@ -3,11 +3,7 @@ import 'package:ampere/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:ampere/features/splash/presentation/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
-enum Routes {
-  splash,
-  signIn,
-  dashboard,
-}
+enum Routes { splash, signIn, dashboard }
 
 extension RoutesExtension on Routes {
   String get route {
