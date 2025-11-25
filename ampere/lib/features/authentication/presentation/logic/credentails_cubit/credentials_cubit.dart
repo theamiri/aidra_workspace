@@ -5,7 +5,7 @@ import 'package:ampere/features/authentication/domain/entities/req_entites/signi
 import 'package:ampere/features/authentication/domain/usecases/clear_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/get_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/save_credentials_usecase.dart';
-import 'package:ampere/features/authentication/presentation/logic/credentials_state.dart';
+import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_state.dart';
 
 /// Cubit responsible for managing saved credentials (email and password)
 class CredentialsCubit extends Cubit<CredentialsState> {
@@ -17,13 +17,13 @@ class CredentialsCubit extends Cubit<CredentialsState> {
     required SaveCredentialsUseCase saveCredentialsUseCase,
     required GetCredentialsUseCase getCredentialsUseCase,
     required ClearCredentialsUseCase clearCredentialsUseCase,
-  })  : _saveCredentialsUseCase = saveCredentialsUseCase,
-        _getCredentialsUseCase = getCredentialsUseCase,
-        _clearCredentialsUseCase = clearCredentialsUseCase,
-        super(const CredentialsInitial());
+  }) : _saveCredentialsUseCase = saveCredentialsUseCase,
+       _getCredentialsUseCase = getCredentialsUseCase,
+       _clearCredentialsUseCase = clearCredentialsUseCase,
+       super(const CredentialsInitial());
 
   /// Save email and password credentials
-  /// 
+  ///
   /// [email] - User email to save
   /// [password] - User password to save
   Future<void> saveCredentials({
@@ -32,10 +32,7 @@ class CredentialsCubit extends Cubit<CredentialsState> {
   }) async {
     emit(const CredentialsLoading());
 
-    final credentials = SignInRequestEntity(
-      email: email,
-      password: password,
-    );
+    final credentials = SignInRequestEntity(email: email, password: password);
 
     final result = await _saveCredentialsUseCase(credentials);
 
@@ -86,4 +83,3 @@ class CredentialsCubit extends Cubit<CredentialsState> {
     return failure.message;
   }
 }
-

@@ -1,10 +1,12 @@
 import 'package:ampere/features/authentication/presentation/screens/signin/signin_screen.dart';
+import 'package:ampere/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:ampere/features/splash/presentation/splash_screen.dart';
 import 'package:go_router/go_router.dart';
 
 enum Routes {
   splash,
   signIn,
+  dashboard,
 }
 
 extension RoutesExtension on Routes {
@@ -13,9 +15,11 @@ extension RoutesExtension on Routes {
       case Routes.splash:
         return '/splash';
       case Routes.signIn:
-        return '/singin';
-      }
-   }
+        return '/signin';
+      case Routes.dashboard:
+        return '/dashboard';
+    }
+  }
 }
 
 extension BuildRoutes on Routes {
@@ -31,6 +35,11 @@ extension BuildRoutes on Routes {
           path: route,
           builder: (context, state) => const SignInScreen(),
         );
-      }
+      case Routes.dashboard:
+        return GoRoute(
+          path: route,
+          builder: (context, state) => const DashboardScreen(),
+        );
     }
   }
+}

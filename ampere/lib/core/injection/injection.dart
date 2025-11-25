@@ -8,13 +8,17 @@ import 'package:ampere/features/authentication/data/repositories/auth_repository
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:ampere/features/authentication/domain/usecases/check_authentication_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/clear_credentials_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/clear_user_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/get_credentials_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/get_current_user_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/get_user_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/refresh_token_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/save_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/signin_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/signout_usecase.dart';
+import 'package:ampere/features/authentication/domain/usecases/store_user_usecase.dart';
+import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
 import 'package:get_it/get_it.dart';
-
 
 final getIt = GetIt.instance;
 
@@ -23,7 +27,7 @@ final getIt = GetIt.instance;
 class Injection {
   /// Gets the ApiClient instance
   static ApiClient get apiClient => getIt<ApiClient>();
-  
+
   /// Gets a SecureStorage instance for a specific key
   /// [key] - The storage key identifier
   static SecureStorage secureStorage(String key) => SecureStorage(key: key);
@@ -39,19 +43,27 @@ class Injection {
   static SignOutUseCase get signOutUseCase => getIt<SignOutUseCase>();
 
   /// Gets the CheckAuthenticationUseCase instance
-  static CheckAuthenticationUseCase get checkAuthenticationUseCase => getIt<CheckAuthenticationUseCase>();
+  static CheckAuthenticationUseCase get checkAuthenticationUseCase =>
+      getIt<CheckAuthenticationUseCase>();
 
   /// Gets the RefreshTokenUseCase instance
-  static RefreshTokenUseCase get refreshTokenUseCase => getIt<RefreshTokenUseCase>();
+  static RefreshTokenUseCase get refreshTokenUseCase =>
+      getIt<RefreshTokenUseCase>();
 
   /// Gets the SaveCredentialsUseCase instance
-  static SaveCredentialsUseCase get saveCredentialsUseCase => getIt<SaveCredentialsUseCase>();
+  static SaveCredentialsUseCase get saveCredentialsUseCase =>
+      getIt<SaveCredentialsUseCase>();
 
   /// Gets the GetCredentialsUseCase instance
-  static GetCredentialsUseCase get getCredentialsUseCase => getIt<GetCredentialsUseCase>();
+  static GetCredentialsUseCase get getCredentialsUseCase =>
+      getIt<GetCredentialsUseCase>();
 
   /// Gets the ClearCredentialsUseCase instance
-  static ClearCredentialsUseCase get clearCredentialsUseCase => getIt<ClearCredentialsUseCase>();
+  static ClearCredentialsUseCase get clearCredentialsUseCase =>
+      getIt<ClearCredentialsUseCase>();
+
+  /// Gets the AuthBloc instance (global authentication management)
+  static AuthBloc get authBloc => getIt<AuthBloc>();
 }
 
 Future<void> initializeDependencies() async {
@@ -69,6 +81,9 @@ Future<void> initializeDependencies() async {
 
   // Use Cases
   _registerUseCases();
+
+  // Presentation Components
+  _registerPresentationComponents();
 }
 
 /// Registers core services
@@ -82,11 +97,7 @@ void _registerCoreServices() {
 
 /// Registers API-related services
 void _registerApiServices() {
-  
-  getIt.registerFactory<LoggingInterceptor>(
-    () => LoggingInterceptor(),
-  );
-
+  getIt.registerFactory<LoggingInterceptor>(() => LoggingInterceptor());
 
   getIt.registerLazySingleton<ApiClient>(
     () => ApiClient(
@@ -104,9 +115,7 @@ void _registerApiServices() {
 /// Data sources handle data fetching from remote APIs or local storage
 void _registerDataSources() {
   // Authentication Data Sources
-  getIt.registerLazySingleton<LocalAuthDataSource>(
-    () => LocalAuthDataSource(),
-  );
+  getIt.registerLazySingleton<LocalAuthDataSource>(() => LocalAuthDataSource());
 
   getIt.registerLazySingleton<RemoteAuthDataSource>(
     () => RemoteAuthDataSource(getIt<ApiClient>()),
@@ -158,9 +167,39 @@ void _registerUseCases() {
   getIt.registerLazySingleton<ClearCredentialsUseCase>(
     () => ClearCredentialsUseCase(authRepository),
   );
+
+  getIt.registerLazySingleton<StoreUserUseCase>(
+    () => StoreUserUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<GetUserUseCase>(
+    () => GetUserUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<GetCurrentUserUseCase>(
+    () => GetCurrentUserUseCase(authRepository),
+  );
+
+  getIt.registerLazySingleton<ClearUserUseCase>(
+    () => ClearUserUseCase(authRepository),
+  );
+}
+
+/// Registers presentation layer components (Cubits, Blocs)
+/// These are provided at the app level for global access
+void _registerPresentationComponents() {
+  // Global Authentication Bloc
+  getIt.registerLazySingleton<AuthBloc>(
+    () => AuthBloc(
+      signInUseCase: getIt<SignInUseCase>(),
+      signOutUseCase: getIt<SignOutUseCase>(),
+      checkAuthenticationUseCase: getIt<CheckAuthenticationUseCase>(),
+      getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
+      authRepository: getIt<AuthRepository>(),
+    ),
+  );
 }
 
 Future<void> resetDependencies() async {
   await getIt.reset();
 }
-

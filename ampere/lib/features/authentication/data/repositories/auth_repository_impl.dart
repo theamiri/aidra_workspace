@@ -17,15 +17,19 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required RemoteAuthDataSource remoteDataSource,
     required LocalAuthDataSource localDataSource,
-  })  : _remoteDataSource = remoteDataSource,
-        _localDataSource = localDataSource;
+  }) : _remoteDataSource = remoteDataSource,
+       _localDataSource = localDataSource;
 
   @override
   Future<SessionEnitity?> signIn(SignInRequestEntity signInRequest) async {
     try {
-      final signInRequestModel = SignInRequestEntityModel.fromEntity(signInRequest);
-      final sessionResponseModel = await _remoteDataSource.signIn(signInRequestModel);
-      
+      final signInRequestModel = SignInRequestEntityModel.fromEntity(
+        signInRequest,
+      );
+      final sessionResponseModel = await _remoteDataSource.signIn(
+        signInRequestModel,
+      );
+
       if (sessionResponseModel != null) {
         // Store session locally after successful sign-in
         await _localDataSource.storeSession(sessionResponseModel);
@@ -33,7 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await _localDataSource.storeSignInCredentials(signInRequestModel);
         return sessionResponseModel;
       }
-      
+
       return null;
     } catch (e) {
       rethrow;
@@ -44,13 +48,13 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<UserEntity?> getCurrentUser() async {
     try {
       final userModel = await _remoteDataSource.getCurrentUser();
-      
+
       if (userModel != null) {
         // Store user locally after successful fetch
         await _localDataSource.storeUser(userModel);
         return userModel;
       }
-      
+
       return null;
     } catch (e) {
       rethrow;
@@ -60,14 +64,16 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<SessionEnitity?> refreshToken(String refreshToken) async {
     try {
-      final sessionResponseModel = await _remoteDataSource.refreshToken(refreshToken);
-      
+      final sessionResponseModel = await _remoteDataSource.refreshToken(
+        refreshToken,
+      );
+
       if (sessionResponseModel != null) {
         // Store new session locally after successful refresh
         await _localDataSource.storeSession(sessionResponseModel);
         return sessionResponseModel;
       }
-      
+
       return null;
     } catch (e) {
       rethrow;
@@ -78,12 +84,14 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> signOut() async {
     try {
       await _remoteDataSource.signOut();
-      // Clear all local data after sign out
-      await _localDataSource.clearAll();
     } catch (e) {
-      // Even if remote sign out fails, clear local data
+      // Log the error but don't throw - we'll still clear local data
+      // This ensures logout works even if the server is unreachable
+      // or the endpoint doesn't exist
+      print('Remote sign out failed: $e');
+    } finally {
+      // Always clear all local data, regardless of remote call success
       await _localDataSource.clearAll();
-      rethrow;
     }
   }
 
@@ -180,4 +188,3 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 }
-
