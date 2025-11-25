@@ -1,5 +1,5 @@
 import 'package:ampere/features/authentication/domain/entities/res_entites/user.dart';
-import 'package:ampere/features/authentication/domain/enums/role_enum.dart';
+ import 'package:ampere/features/authentication/domain/enums/role_enum.dart';
 
 /// User model extending the domain entity
 /// Handles JSON serialization for API responses
