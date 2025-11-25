@@ -28,7 +28,7 @@ class AuthRepositoryImpl implements AuthRepository {
       
       if (sessionResponseModel != null) {
         // Store session locally after successful sign-in
-        await _localDataSource.storeSessionResponse(sessionResponseModel);
+        await _localDataSource.storeSession(sessionResponseModel);
         // Store credentials for future use
         await _localDataSource.storeSignInCredentials(signInRequestModel);
         return sessionResponseModel;
@@ -58,6 +58,23 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
+  Future<SessionEnitity?> refreshToken(String refreshToken) async {
+    try {
+      final sessionResponseModel = await _remoteDataSource.refreshToken(refreshToken);
+      
+      if (sessionResponseModel != null) {
+        // Store new session locally after successful refresh
+        await _localDataSource.storeSession(sessionResponseModel);
+        return sessionResponseModel;
+      }
+      
+      return null;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  @override
   Future<void> signOut() async {
     try {
       await _remoteDataSource.signOut();
@@ -74,7 +91,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<void> storeSessionResponse(SessionEnitity session) async {
     try {
       final sessionModel = SessionEnitityModel.fromEntity(session);
-      await _localDataSource.storeSessionResponse(sessionModel);
+      await _localDataSource.storeSession(sessionModel);
     } catch (e) {
       rethrow;
     }
@@ -83,7 +100,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<SessionEnitity?> getStoredSessionResponse() async {
     try {
-      return await _localDataSource.getSessionResponse();
+      return await _localDataSource.getSession();
     } catch (e) {
       rethrow;
     }
@@ -92,7 +109,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> clearSessionResponse() async {
     try {
-      await _localDataSource.clearSessionResponse();
+      await _localDataSource.clearSession();
     } catch (e) {
       rethrow;
     }

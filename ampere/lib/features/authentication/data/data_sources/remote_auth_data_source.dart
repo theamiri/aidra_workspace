@@ -66,6 +66,34 @@ class RemoteAuthDataSource {
     }
   }
 
+  /// Refresh access token using refresh token
+  /// 
+  /// [refreshToken] - The refresh token to use for getting new tokens
+  /// 
+  /// Returns [SessionEnitityModel?] containing new access token and refresh token
+  /// Returns null if response data is empty
+  /// 
+  /// Throws [AuthenticationException] if refresh token is invalid or expired
+  /// Throws [ServerException] if server returns an error
+  /// Throws [NetworkException] if network connection fails
+  Future<SessionEnitityModel?> refreshToken(String refreshToken) async {
+    try {
+      final response = await _apiClient.post(
+        ApiEndpoints.refreshToken,
+        data: {'refreshToken': refreshToken},
+      );
+
+      if (response.data == null) {
+        return null;
+      }
+
+      final jsonData = response.data as Map<String, dynamic>;
+      return SessionEnitityModel.fromJson(jsonData);
+    } catch (e, stackTrace) {
+      ErrorHandler.handleRemoteError(e, stackTrace, 'refresh token');
+    }
+  }
+
   /// Sign out the current user
   /// 
   /// Throws [ServerException] if server returns an error

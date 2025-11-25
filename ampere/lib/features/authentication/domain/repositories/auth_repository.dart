@@ -27,6 +27,18 @@ abstract class AuthRepository {
   /// Throws [NetworkException] if network connection fails
   Future<UserEntity?> getCurrentUser();
 
+  /// Refresh access token using refresh token
+  /// 
+  /// [refreshToken] - The refresh token to use for getting new tokens
+  /// 
+  /// Returns [SessionEnitity?] containing new access token and refresh token
+  /// Returns null if refresh fails or response is empty
+  /// 
+  /// Throws [AuthenticationException] if refresh token is invalid or expired
+  /// Throws [ServerException] if server returns an error
+  /// Throws [NetworkException] if network connection fails
+  Future<SessionEnitity?> refreshToken(String refreshToken);
+
   /// Sign out the current user
   /// 
   /// Throws [ServerException] if server returns an error
