@@ -1,6 +1,6 @@
-import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request.dart';
-import 'package:ampere/features/authentication/domain/entities/res_entites/session_response.dart';
-import 'package:ampere/features/authentication/domain/entities/res_entites/user.dart';
+import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
+import 'package:ampere/features/authentication/domain/entities/res_entites/session_entity.dart';
+import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 
 /// Repository interface for authentication operations
 /// Defines the contract for authentication data operations
@@ -9,23 +9,23 @@ abstract class AuthRepository {
   /// 
   /// [signInRequest] - The sign-in request containing email and password
   /// 
-  /// Returns [SessionResponse?] containing access token and refresh token
+  /// Returns [SessionEnitity?] containing access token and refresh token
   /// Returns null if sign-in fails or response is empty
   /// 
   /// Throws [AuthenticationException] if authentication fails
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionResponse?> signIn(SignInRequest signInRequest);
+  Future<SessionEnitity?> signIn(SignInRequestEntity signInRequest);
 
   /// Get current user information
   /// 
-  /// Returns [User?] containing user details
+  /// Returns [UserEntity?] containing user details
   /// Returns null if user not found or response is empty
   /// 
   /// Throws [AuthenticationException] if not authenticated
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<User?> getCurrentUser();
+  Future<UserEntity?> getCurrentUser();
 
   /// Sign out the current user
   /// 
@@ -38,14 +38,14 @@ abstract class AuthRepository {
   /// [session] - The session response to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSessionResponse(SessionResponse session);
+  Future<void> storeSessionResponse(SessionEnitity session);
 
   /// Get stored session response
   /// 
-  /// Returns [SessionResponse?] if found, null otherwise
+  /// Returns [SessionEnitity?] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SessionResponse?> getStoredSessionResponse();
+  Future<SessionEnitity?> getStoredSessionResponse();
 
   /// Clear stored session response
   /// 
@@ -57,14 +57,14 @@ abstract class AuthRepository {
   /// [credentials] - The sign-in request to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSignInCredentials(SignInRequest credentials);
+  Future<void> storeSignInCredentials(SignInRequestEntity credentials);
 
   /// Get stored sign-in credentials
   /// 
-  /// Returns [SignInRequest?] if found, null otherwise
+  /// Returns [SignInRequestEntity?] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SignInRequest?> getStoredSignInCredentials();
+  Future<SignInRequestEntity?> getStoredSignInCredentials();
 
   /// Clear stored sign-in credentials
   /// 
@@ -76,14 +76,14 @@ abstract class AuthRepository {
   /// [user] - The user to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeUser(User user);
+  Future<void> storeUser(UserEntity user);
 
   /// Get stored user information
   /// 
-  /// Returns [User?] if found, null otherwise
+  /// Returns [UserEntity?] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<User?> getStoredUser();
+  Future<UserEntity?> getStoredUser();
 
   /// Clear stored user information
   /// 

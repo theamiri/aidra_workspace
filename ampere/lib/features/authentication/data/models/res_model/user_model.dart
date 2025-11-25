@@ -1,11 +1,11 @@
-import 'package:ampere/features/authentication/domain/entities/res_entites/user.dart';
+import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 import 'package:ampere/features/authentication/domain/enums/role_enum.dart';
 
 /// User model extending the domain entity
 /// Handles JSON serialization for API responses
 /// Note: Role is not returned from current user endpoint, it should be extracted from JWT token
-class UserModel extends User {
-  const UserModel({
+class UserEntityModel extends UserEntity {
+  const UserEntityModel({
     super.id,
     super.email,
     super.firstname,
@@ -18,8 +18,8 @@ class UserModel extends User {
   });
 
   /// Create a UserModel from a JSON map (current user endpoint response)
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
+  factory UserEntityModel.fromJson(Map<String, dynamic> json) {
+    return UserEntityModel(
       id: json['id'] as int?,
       email: json['email'] as String?,
       firstname: json['firstname'] as String?,
@@ -49,8 +49,8 @@ class UserModel extends User {
       };
 
   /// Create a UserModel from the domain entity
-  factory UserModel.fromEntity(User entity) {
-    return UserModel(
+  factory UserEntityModel.fromEntity(UserEntity entity) {
+    return UserEntityModel(
       id: entity.id,
       email: entity.email,
       firstname: entity.firstname,

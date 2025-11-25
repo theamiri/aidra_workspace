@@ -1,9 +1,9 @@
 import 'package:ampere/core/api/api_client.dart';
 import 'package:ampere/core/api/api_endpoints.dart';
 import 'package:ampere/core/utils/error_handler.dart';
-import 'package:ampere/features/authentication/data/models/session_model.dart';
-import 'package:ampere/features/authentication/data/models/signin_request_model.dart';
-import 'package:ampere/features/authentication/data/models/user_model.dart';
+import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
+import 'package:ampere/features/authentication/data/models/res_model/session_model.dart';
+import 'package:ampere/features/authentication/data/models/res_model/user_model.dart';
 
 /// Remote data source for authentication
 /// Handles API calls for sign in and sign out
@@ -16,14 +16,14 @@ class RemoteAuthDataSource {
   /// 
   /// [signInRequest] - The sign-in request containing email and password
   /// 
-  /// Returns [SessionModel?] containing access token and refresh token only
+  /// Returns [SessionEnitityModel?] containing access token and refresh token only
   /// Returns null if response data is empty
   /// Note: User information must be fetched separately using getCurrentUser()
   /// 
   /// Throws [AuthenticationException] if authentication fails
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionModel?> signIn(SignInRequestModel signInRequest) async {
+  Future<SessionEnitityModel?> signIn(SignInRequestEntityModel signInRequest) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.login,
@@ -35,7 +35,7 @@ class RemoteAuthDataSource {
       }
 
       final jsonData = response.data as Map<String, dynamic>;
-      return SessionModel.fromJson(jsonData);
+      return SessionEnitityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'sign in');
     }
@@ -43,13 +43,13 @@ class RemoteAuthDataSource {
 
   /// Get current user information
   /// 
-  /// Returns [UserModel?] containing user details
+  /// Returns [UserEntityModel?] containing user details
   /// Returns null if response data is empty
   /// 
   /// Throws [AuthenticationException] if not authenticated
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<UserModel?> getCurrentUser() async {
+  Future<UserEntityModel?> getCurrentUser() async {
     try {
       final response = await _apiClient.get(
         ApiEndpoints.currentUser,
@@ -60,7 +60,7 @@ class RemoteAuthDataSource {
       }
 
       final jsonData = response.data as Map<String, dynamic>;
-      return UserModel.fromJson(jsonData);
+      return UserEntityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'get current user');
     }

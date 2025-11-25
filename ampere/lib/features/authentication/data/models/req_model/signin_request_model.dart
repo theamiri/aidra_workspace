@@ -1,16 +1,16 @@
-import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request.dart';
+import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
 
 /// Sign-in request model extending the domain entity
 /// Handles JSON serialization for API requests
-class SignInRequestModel extends SignInRequest {
-  const SignInRequestModel({
+class SignInRequestEntityModel extends SignInRequestEntity {
+  const SignInRequestEntityModel({
     required super.email,
     required super.password,
   });
 
   /// Create a SignInRequestModel from a JSON map
-  factory SignInRequestModel.fromJson(Map<String, dynamic> json) {
-    return SignInRequestModel(
+  factory SignInRequestEntityModel.fromJson(Map<String, dynamic> json) {
+    return SignInRequestEntityModel(
       email: json['email'] as String,
       password: json['password'] as String,
     );
@@ -24,8 +24,8 @@ class SignInRequestModel extends SignInRequest {
       };
 
   /// Create a SignInRequestModel from the domain entity
-  factory SignInRequestModel.fromEntity(SignInRequest entity) {
-    return SignInRequestModel(
+  factory SignInRequestEntityModel.fromEntity(SignInRequestEntity entity) {
+    return SignInRequestEntityModel(
       email: entity.email,
       password: entity.password,
     );

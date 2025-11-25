@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request.dart';
+import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
 
 /// Base class for credentials states
 abstract class CredentialsState extends Equatable {
@@ -21,7 +21,7 @@ class CredentialsLoading extends CredentialsState {
 
 /// Credentials loaded state - credentials have been retrieved
 class CredentialsLoaded extends CredentialsState {
-  final SignInRequest? credentials;
+  final SignInRequestEntity? credentials;
 
   const CredentialsLoaded(this.credentials);
 

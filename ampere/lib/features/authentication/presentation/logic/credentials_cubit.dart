@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ampere/core/errors/failures.dart';
 import 'package:ampere/core/shared/use_case.dart';
-import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request.dart';
+import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
 import 'package:ampere/features/authentication/domain/usecases/clear_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/get_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/save_credentials_usecase.dart';
@@ -32,7 +32,7 @@ class CredentialsCubit extends Cubit<CredentialsState> {
   }) async {
     emit(const CredentialsLoading());
 
-    final credentials = SignInRequest(
+    final credentials = SignInRequestEntity(
       email: email,
       password: password,
     );

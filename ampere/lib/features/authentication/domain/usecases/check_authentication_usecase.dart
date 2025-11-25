@@ -1,19 +1,19 @@
 import 'package:ampere/core/shared/use_case.dart';
 import 'package:ampere/core/errors/exceptions.dart';
 import 'package:ampere/core/errors/failures.dart';
-import 'package:ampere/features/authentication/domain/entities/res_entites/user.dart';
+import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
 
 /// Use case for checking if user is authenticated
 /// Returns the authenticated user if found, otherwise returns a failure
-class CheckAuthenticationUseCase implements UseCase<User, NoParams> {
+class CheckAuthenticationUseCase implements UseCase<UserEntity, NoParams> {
   final AuthRepository _repository;
 
   CheckAuthenticationUseCase(this._repository);
 
   @override
-  Future<Either<Failure, User>> call(NoParams params) async {
+  Future<Either<Failure, UserEntity>> call(NoParams params) async {
     try {
       // First check if we have a stored session
       final storedSession = await _repository.getStoredSessionResponse();

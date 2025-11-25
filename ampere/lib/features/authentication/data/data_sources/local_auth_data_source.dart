@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:ampere/core/storage/secure_storage.dart';
 import 'package:ampere/core/utils/error_handler.dart';
-import 'package:ampere/features/authentication/data/models/session_model.dart';
-import 'package:ampere/features/authentication/data/models/signin_request_model.dart';
-import 'package:ampere/features/authentication/data/models/user_model.dart';
+import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
+import 'package:ampere/features/authentication/data/models/res_model/session_model.dart';
+import 'package:ampere/features/authentication/data/models/res_model/user_model.dart';
 
 /// Local data source for authentication data
 /// Handles storing and fetching session responses and sign-in credentials
@@ -28,7 +28,7 @@ class LocalAuthDataSource {
   /// [session] - The session response to store (contains only tokens)
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSessionResponse(SessionModel session) async {
+  Future<void> storeSessionResponse(SessionEnitityModel session) async {
     try {
       final jsonString = jsonEncode(session.toJson());
       await _sessionStorage.save(value: jsonString);
@@ -39,10 +39,10 @@ class LocalAuthDataSource {
 
   /// Fetch stored session response
   /// 
-  /// Returns [SessionModel] if found, null otherwise
+  /// Returns [SessionEnitityModel] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SessionModel?> getSessionResponse() async {
+  Future<SessionEnitityModel?> getSessionResponse() async {
     try {
       final jsonString = await _sessionStorage.get();
       if (jsonString == null || jsonString.toString().isEmpty) {
@@ -50,7 +50,7 @@ class LocalAuthDataSource {
       }
 
       final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
-      return SessionModel.fromJson(jsonMap);
+      return SessionEnitityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get session response');
     }
@@ -72,7 +72,7 @@ class LocalAuthDataSource {
   /// [credentials] - The sign-in request to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSignInCredentials(SignInRequestModel credentials) async {
+  Future<void> storeSignInCredentials(SignInRequestEntityModel credentials) async {
     try {
       final jsonString = jsonEncode(credentials.toJson());
       await _credentialsStorage.save(value: jsonString);
@@ -83,10 +83,10 @@ class LocalAuthDataSource {
 
   /// Fetch stored sign-in request credentials
   /// 
-  /// Returns [SignInRequestModel] if found, null otherwise
+  /// Returns [SignInRequestEntityModel] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SignInRequestModel?> getSignInCredentials() async {
+  Future<SignInRequestEntityModel?> getSignInCredentials() async {
     try {
       final jsonString = await _credentialsStorage.get();
       if (jsonString == null || jsonString.toString().isEmpty) {
@@ -94,7 +94,7 @@ class LocalAuthDataSource {
       }
 
       final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
-      return SignInRequestModel.fromJson(jsonMap);
+      return SignInRequestEntityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get sign-in credentials');
     }
@@ -116,7 +116,7 @@ class LocalAuthDataSource {
   /// [user] - The user model to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeUser(UserModel user) async {
+  Future<void> storeUser(UserEntityModel user) async {
     try {
       final jsonString = jsonEncode(user.toJson());
       await _userStorage.save(value: jsonString);
@@ -127,10 +127,10 @@ class LocalAuthDataSource {
 
   /// Fetch stored user information
   /// 
-  /// Returns [UserModel] if found, null otherwise
+  /// Returns [UserEntityModel] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<UserModel?> getUser() async {
+  Future<UserEntityModel?> getUser() async {
     try {
       final jsonString = await _userStorage.get();
       if (jsonString == null || jsonString.toString().isEmpty) {
@@ -138,7 +138,7 @@ class LocalAuthDataSource {
       }
 
       final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
-      return UserModel.fromJson(jsonMap);
+      return UserEntityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get user');
     }

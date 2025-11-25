@@ -2,7 +2,7 @@ import 'package:ampere/features/authentication/domain/enums/role_enum.dart';
 import 'package:equatable/equatable.dart';
 
 /// User entity representing a user in the system
-class User extends Equatable {
+class UserEntity extends Equatable {
   final int? id;
   final String? email;
   final String? firstname;
@@ -13,7 +13,7 @@ class User extends Equatable {
   final int? siteId;
   final Role? role; // Role is extracted from JWT token, not from current user endpoint
 
-  const User({
+  const UserEntity({
     this.id,
     this.email,
     this.firstname,

@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
 /// Sign-in request entity containing user credentials
-class SignInRequest extends Equatable {
+class SignInRequestEntity extends Equatable {
   final String email;
   final String password;
 
-  const SignInRequest({
+  const SignInRequestEntity({
     required this.email,
     required this.password,
   });

@@ -1,11 +1,11 @@
 import 'package:ampere/features/authentication/data/data_sources/local_auth_data_source.dart';
 import 'package:ampere/features/authentication/data/data_sources/remote_auth_data_source.dart';
-import 'package:ampere/features/authentication/data/models/session_model.dart';
-import 'package:ampere/features/authentication/data/models/signin_request_model.dart';
-import 'package:ampere/features/authentication/data/models/user_model.dart';
-import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request.dart';
-import 'package:ampere/features/authentication/domain/entities/res_entites/session_response.dart';
-import 'package:ampere/features/authentication/domain/entities/res_entites/user.dart';
+import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
+import 'package:ampere/features/authentication/data/models/res_model/session_model.dart';
+import 'package:ampere/features/authentication/data/models/res_model/user_model.dart';
+import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
+import 'package:ampere/features/authentication/domain/entities/res_entites/session_entity.dart';
+import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 
 /// Implementation of AuthRepository
@@ -21,9 +21,9 @@ class AuthRepositoryImpl implements AuthRepository {
         _localDataSource = localDataSource;
 
   @override
-  Future<SessionResponse?> signIn(SignInRequest signInRequest) async {
+  Future<SessionEnitity?> signIn(SignInRequestEntity signInRequest) async {
     try {
-      final signInRequestModel = SignInRequestModel.fromEntity(signInRequest);
+      final signInRequestModel = SignInRequestEntityModel.fromEntity(signInRequest);
       final sessionResponseModel = await _remoteDataSource.signIn(signInRequestModel);
       
       if (sessionResponseModel != null) {
@@ -41,7 +41,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User?> getCurrentUser() async {
+  Future<UserEntity?> getCurrentUser() async {
     try {
       final userModel = await _remoteDataSource.getCurrentUser();
       
@@ -71,9 +71,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> storeSessionResponse(SessionResponse session) async {
+  Future<void> storeSessionResponse(SessionEnitity session) async {
     try {
-      final sessionModel = SessionModel.fromEntity(session);
+      final sessionModel = SessionEnitityModel.fromEntity(session);
       await _localDataSource.storeSessionResponse(sessionModel);
     } catch (e) {
       rethrow;
@@ -81,7 +81,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<SessionResponse?> getStoredSessionResponse() async {
+  Future<SessionEnitity?> getStoredSessionResponse() async {
     try {
       return await _localDataSource.getSessionResponse();
     } catch (e) {
@@ -99,9 +99,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> storeSignInCredentials(SignInRequest credentials) async {
+  Future<void> storeSignInCredentials(SignInRequestEntity credentials) async {
     try {
-      final credentialsModel = SignInRequestModel.fromEntity(credentials);
+      final credentialsModel = SignInRequestEntityModel.fromEntity(credentials);
       await _localDataSource.storeSignInCredentials(credentialsModel);
     } catch (e) {
       rethrow;
@@ -109,7 +109,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<SignInRequest?> getStoredSignInCredentials() async {
+  Future<SignInRequestEntity?> getStoredSignInCredentials() async {
     try {
       return await _localDataSource.getSignInCredentials();
     } catch (e) {
@@ -127,9 +127,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<void> storeUser(User user) async {
+  Future<void> storeUser(UserEntity user) async {
     try {
-      final userModel = UserModel.fromEntity(user);
+      final userModel = UserEntityModel.fromEntity(user);
       await _localDataSource.storeUser(userModel);
     } catch (e) {
       rethrow;
@@ -137,7 +137,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<User?> getStoredUser() async {
+  Future<UserEntity?> getStoredUser() async {
     try {
       return await _localDataSource.getUser();
     } catch (e) {
