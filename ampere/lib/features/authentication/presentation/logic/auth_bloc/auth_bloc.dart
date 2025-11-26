@@ -36,6 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<SignInEvent>(_onSignIn);
     on<SignOutEvent>(_onSignOut);
     on<CheckAuthenticationEvent>(_onCheckAuthentication);
+    on<SessionExpiredEvent>(_onSessionExpired);
   }
 
   Future<void> _onSignIn(
@@ -147,5 +148,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   /// Check if user is currently authenticated
   bool get isAuthenticated => state is Authenticated;
+
+  Future<void> _onSessionExpired(
+    SessionExpiredEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    // Show error message to user before signing out
+    emit(AuthenticationError(event.reason));
+
+    // Clear auth token from ApiClient
+    Injection.apiClient.clearAuthToken();
+
+    // Clear local session data
+    try {
+      await _authRepository.clearSession();
+    } catch (e) {
+      // Log but don't fail - we still want to sign out
+    }
+
+    // Transition to unauthenticated state after a brief delay
+    // This allows the error message to be displayed
+    await Future.delayed(const Duration(milliseconds: 100));
+    
+    if (emit.isDone) return;
+    emit(const Unauthenticated());
+  }
 }
 

@@ -29,3 +29,14 @@ class CheckAuthenticationEvent extends AuthEvent {
   const CheckAuthenticationEvent();
 }
 
+/// Event to notify that the session has expired
+/// This is used when token refresh fails or refresh token is missing/expired
+class SessionExpiredEvent extends AuthEvent {
+  final String reason;
+
+  const SessionExpiredEvent(this.reason);
+
+  @override
+  List<Object?> get props => [reason];
+}
+

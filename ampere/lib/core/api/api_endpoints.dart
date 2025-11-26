@@ -1,16 +1,14 @@
-
-
+/// API endpoints for the application
+/// Centralized location for all API route definitions
 abstract class ApiEndpoints {
-   // Base paths
+  // Base paths
   static const String authBasePath = '/api/auth';
-  
-  //authentication endpoints
+
+  // Authentication endpoints
   static const String login = '$authBasePath/authenticate';
   static const String logout = '$authBasePath/logout';
   static const String refreshToken = '$authBasePath/refresh-token';
-  
-  //user endpoints
-  static const String currentUser = '$authBasePath/current-user';
 
- 
+  // User endpoints
+  static const String currentUser = '$authBasePath/current-user';
 }

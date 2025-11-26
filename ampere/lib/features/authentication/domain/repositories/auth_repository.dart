@@ -9,13 +9,13 @@ abstract class AuthRepository {
   /// 
   /// [signInRequest] - The sign-in request containing email and password
   /// 
-  /// Returns [SessionEnitity?] containing access token and refresh token
+  /// Returns [SessionEntity?] containing access token and refresh token
   /// Returns null if sign-in fails or response is empty
   /// 
   /// Throws [AuthenticationException] if authentication fails
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionEnitity?> signIn(SignInRequestEntity signInRequest);
+  Future<SessionEntity?> signIn(SignInRequestEntity signInRequest);
 
   /// Get current user information
   /// 
@@ -31,13 +31,13 @@ abstract class AuthRepository {
   /// 
   /// [refreshToken] - The refresh token to use for getting new tokens
   /// 
-  /// Returns [SessionEnitity?] containing new access token and refresh token
+  /// Returns [SessionEntity?] containing new access token and refresh token
   /// Returns null if refresh fails or response is empty
   /// 
   /// Throws [AuthenticationException] if refresh token is invalid or expired
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionEnitity?> refreshToken(String refreshToken);
+  Future<SessionEntity?> refreshToken(String refreshToken);
 
   /// Sign out the current user
   /// 
@@ -50,14 +50,14 @@ abstract class AuthRepository {
   /// [session] - The session to store
   /// 
   /// Throws [CacheException] if storage fails
-  Future<void> storeSession(SessionEnitity session);
+  Future<void> storeSession(SessionEntity session);
 
   /// Get stored session
   /// 
-  /// Returns [SessionEnitity?] if found, null otherwise
+  /// Returns [SessionEntity?] if found, null otherwise
   /// 
   /// Throws [CacheException] if retrieval fails
-  Future<SessionEnitity?> getStoredSession();
+  Future<SessionEntity?> getStoredSession();
 
   /// Clear stored session
   /// 

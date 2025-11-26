@@ -5,32 +5,34 @@ import 'package:ampere/features/authentication/domain/entities/req_entites/signi
 import 'package:ampere/features/authentication/domain/entities/res_entites/session_entity.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:ampere/core/extensions/exception_failure_extension.dart';
 
 /// Use case for signing in a user
-class SignInUseCase implements UseCase<SessionEnitity, SignInRequestEntity> {
+class SignInUseCase implements UseCase<SessionEntity, SignInRequestEntity> {
   final AuthRepository _repository;
 
   SignInUseCase(this._repository);
 
   @override
-  Future<Either<Failure, SessionEnitity>> call(SignInRequestEntity params) async {
+  Future<Either<Failure, SessionEntity>> call(
+    SignInRequestEntity params,
+  ) async {
     try {
       final sessionResponse = await _repository.signIn(params);
-      
+
       if (sessionResponse == null) {
-        return Left(ServerFailure(
-          message: 'Sign in failed: Empty response from server',
-        ));
+        return Left(
+          ServerFailure(message: 'Sign in failed: Empty response from server'),
+        );
       }
 
       return Right(sessionResponse);
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during sign in: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during sign in: $e'),
+      );
     }
   }
 }
-

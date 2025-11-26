@@ -1,6 +1,6 @@
 import 'package:ampere/core/api/api_client.dart';
-import 'package:ampere/core/api/logging_interceptor.dart';
-import 'package:ampere/core/config/env_config.dart';
+import 'package:ampere/core/interceptors/logging_interceptor.dart';
+import 'package:ampere/core/interceptors/auth_interceptor.dart';
 import 'package:ampere/core/storage/secure_storage.dart';
 import 'package:ampere/features/authentication/data/data_sources/local_auth_data_source.dart';
 import 'package:ampere/features/authentication/data/data_sources/remote_auth_data_source.dart';
@@ -18,6 +18,7 @@ import 'package:ampere/features/authentication/domain/usecases/signin_usecase.da
 import 'package:ampere/features/authentication/domain/usecases/signout_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/store_user_usecase.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
+import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -64,26 +65,37 @@ class Injection {
 
   /// Gets the AuthBloc instance (global authentication management)
   static AuthBloc get authBloc => getIt<AuthBloc>();
+
+  /// Gets the CredentialsCubit instance (manages saved credentials)
+  static CredentialsCubit get credentialsCubit => getIt<CredentialsCubit>();
+
+  /// Gets the LoggingInterceptor instance
+  static LoggingInterceptor get loggingInterceptor =>
+      getIt<LoggingInterceptor>();
 }
 
 Future<void> initializeDependencies() async {
   // Core Services
   _registerCoreServices();
 
-  // API Services
-  _registerApiServices();
+  // API Services - Register ApiClient first (without AuthInterceptor)
+  // This allows DataSources to depend on it
+  _registerApiClient();
 
-  // Data Sources
+  // Data Sources (depend on ApiClient)
   _registerDataSources();
 
-  // Repositories
+  // Repositories (depend on DataSources)
   _registerRepositories();
 
-  // Use Cases
+  // Use Cases (depend on Repositories)
   _registerUseCases();
 
-  // Presentation Components
+  // Presentation Components (depend on UseCases)
   _registerPresentationComponents();
+
+  // Now add AuthInterceptor to ApiClient after all dependencies are registered
+  _addAuthInterceptor();
 }
 
 /// Registers core services
@@ -95,18 +107,29 @@ void _registerCoreServices() {
   // Create HiveClient instances directly: HiveClient<T>(boxName)
 }
 
-/// Registers API-related services
-void _registerApiServices() {
-  getIt.registerFactory<LoggingInterceptor>(() => LoggingInterceptor());
+/// Registers ApiClient (without AuthInterceptor to avoid circular dependency)
+void _registerApiClient() {
+  getIt.registerLazySingleton<LoggingInterceptor>(() => LoggingInterceptor());
 
-  getIt.registerLazySingleton<ApiClient>(
-    () => ApiClient(
-      baseUrl: EnvConfig.apiBaseUrl,
+  getIt.registerLazySingleton<ApiClient>(() {
+    // Create ApiClient with logging interceptor only
+    // AuthInterceptor will be added later after all dependencies are registered
+    return ApiClient(
       timeout: const Duration(seconds: 30),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
+      interceptors: [Injection.loggingInterceptor],
+    );
+  });
+}
+
+/// Adds AuthInterceptor to ApiClient after all dependencies are registered
+void _addAuthInterceptor() {
+  final apiClient = getIt<ApiClient>();
+  apiClient.dio.interceptors.add(
+    AuthInterceptor(
+      refreshTokenUseCase: getIt<RefreshTokenUseCase>(),
+      apiClient: apiClient,
+      authBloc: getIt<AuthBloc>(),
+      authRepository: getIt<AuthRepository>(),
     ),
   );
 }
@@ -196,6 +219,15 @@ void _registerPresentationComponents() {
       checkAuthenticationUseCase: getIt<CheckAuthenticationUseCase>(),
       getCurrentUserUseCase: getIt<GetCurrentUserUseCase>(),
       authRepository: getIt<AuthRepository>(),
+    ),
+  );
+
+  // Credentials Cubit (manages saved credentials)
+  getIt.registerLazySingleton<CredentialsCubit>(
+    () => CredentialsCubit(
+      saveCredentialsUseCase: getIt<SaveCredentialsUseCase>(),
+      getCredentialsUseCase: getIt<GetCredentialsUseCase>(),
+      clearCredentialsUseCase: getIt<ClearCredentialsUseCase>(),
     ),
   );
 }

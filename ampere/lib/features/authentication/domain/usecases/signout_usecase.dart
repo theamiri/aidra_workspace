@@ -3,6 +3,7 @@ import 'package:ampere/core/errors/exceptions.dart';
 import 'package:ampere/core/errors/failures.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:ampere/core/extensions/exception_failure_extension.dart';
 
 /// Use case for signing out a user
 class SignOutUseCase implements UseCase<void, NoParams> {
@@ -18,10 +19,9 @@ class SignOutUseCase implements UseCase<void, NoParams> {
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during sign out: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during sign out: $e'),
+      );
     }
   }
 }
-

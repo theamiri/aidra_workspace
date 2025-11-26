@@ -4,6 +4,7 @@ import 'package:ampere/core/errors/failures.dart';
 import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:ampere/core/extensions/exception_failure_extension.dart';
 
 /// Use case for retrieving stored user information
 class GetUserUseCase implements UseCase<UserEntity?, NoParams> {
@@ -19,10 +20,9 @@ class GetUserUseCase implements UseCase<UserEntity?, NoParams> {
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during get user: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during get user: $e'),
+      );
     }
   }
 }
-

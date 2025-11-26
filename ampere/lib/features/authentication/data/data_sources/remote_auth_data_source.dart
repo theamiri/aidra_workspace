@@ -16,14 +16,14 @@ class RemoteAuthDataSource {
   /// 
   /// [signInRequest] - The sign-in request containing email and password
   /// 
-  /// Returns [SessionEnitityModel?] containing access token and refresh token only
+  /// Returns [SessionEntityModel?] containing access token and refresh token only
   /// Returns null if response data is empty
   /// Note: User information must be fetched separately using getCurrentUser()
   /// 
   /// Throws [AuthenticationException] if authentication fails
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionEnitityModel?> signIn(SignInRequestEntityModel signInRequest) async {
+  Future<SessionEntityModel?> signIn(SignInRequestEntityModel signInRequest) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.login,
@@ -35,7 +35,7 @@ class RemoteAuthDataSource {
       }
 
       final jsonData = response.data as Map<String, dynamic>;
-      return SessionEnitityModel.fromJson(jsonData);
+      return SessionEntityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'sign in');
     }
@@ -70,13 +70,13 @@ class RemoteAuthDataSource {
   /// 
   /// [refreshToken] - The refresh token to use for getting new tokens
   /// 
-  /// Returns [SessionEnitityModel?] containing new access token and refresh token
+  /// Returns [SessionEntityModel?] containing new access token and refresh token
   /// Returns null if response data is empty
   /// 
   /// Throws [AuthenticationException] if refresh token is invalid or expired
   /// Throws [ServerException] if server returns an error
   /// Throws [NetworkException] if network connection fails
-  Future<SessionEnitityModel?> refreshToken(String refreshToken) async {
+  Future<SessionEntityModel?> refreshToken(String refreshToken) async {
     try {
       final response = await _apiClient.post(
         ApiEndpoints.refreshToken,
@@ -88,7 +88,7 @@ class RemoteAuthDataSource {
       }
 
       final jsonData = response.data as Map<String, dynamic>;
-      return SessionEnitityModel.fromJson(jsonData);
+      return SessionEntityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'refresh token');
     }

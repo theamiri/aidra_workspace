@@ -1,5 +1,4 @@
 import 'package:ampere/core/api/api_exceptions.dart';
-import 'package:ampere/core/api/logging_interceptor.dart';
 import 'package:ampere/core/config/env_config.dart';
 import 'package:dio/dio.dart';
 
@@ -10,20 +9,19 @@ class ApiClient {
   String? _authToken;
 
   /// Creates an ApiClient instance
-  /// 
+  ///
   /// [baseUrl] - Base URL for API requests (defaults to EnvConfig.apiBaseUrl)
   /// [timeout] - Request timeout in milliseconds (default: 30000)
   /// [headers] - Default headers to include in all requests
   /// [interceptors] - Additional interceptors to add
   ApiClient({
-    String? baseUrl,
     Duration? timeout,
     Map<String, dynamic>? headers,
     List<Interceptor>? interceptors,
   }) {
     _dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl ?? EnvConfig.apiBaseUrl,
+        baseUrl: EnvConfig.apiBaseUrl,
         connectTimeout: timeout ?? const Duration(seconds: 30),
         receiveTimeout: timeout ?? const Duration(seconds: 30),
         sendTimeout: timeout ?? const Duration(seconds: 30),
@@ -34,9 +32,6 @@ class ApiClient {
         },
       ),
     );
-
-    // Add logging interceptor (only in dev mode)
-    _dio.interceptors.add(LoggingInterceptor());
 
     // Add custom interceptors if provided
     if (interceptors != null) {
@@ -76,7 +71,7 @@ class ApiClient {
   }
 
   /// Performs a GET request
-  /// 
+  ///
   /// [path] - API endpoint path
   /// [queryParameters] - Query parameters
   /// [options] - Additional request options
@@ -101,7 +96,7 @@ class ApiClient {
   }
 
   /// Performs a POST request
-  /// 
+  ///
   /// [path] - API endpoint path
   /// [data] - Request body data
   /// [queryParameters] - Query parameters
@@ -131,7 +126,7 @@ class ApiClient {
   }
 
   /// Performs a PUT request
-  /// 
+  ///
   /// [path] - API endpoint path
   /// [data] - Request body data
   /// [queryParameters] - Query parameters
@@ -161,7 +156,7 @@ class ApiClient {
   }
 
   /// Performs a PATCH request
-  /// 
+  ///
   /// [path] - API endpoint path
   /// [data] - Request body data
   /// [queryParameters] - Query parameters
@@ -191,7 +186,7 @@ class ApiClient {
   }
 
   /// Performs a DELETE request
-  /// 
+  ///
   /// [path] - API endpoint path
   /// [data] - Request body data
   /// [queryParameters] - Query parameters
@@ -217,7 +212,7 @@ class ApiClient {
   }
 
   /// Downloads a file
-  /// 
+  ///
   /// [url] - File URL to download
   /// [savePath] - Path to save the file
   /// [onReceiveProgress] - Progress callback
@@ -248,7 +243,7 @@ class ApiClient {
   }
 
   /// Uploads a file
-  /// 
+  ///
   /// [path] - API endpoint path
   /// [filePath] - Path to the file to upload
   /// [onSendProgress] - Progress callback
@@ -279,4 +274,3 @@ class ApiClient {
   /// Gets the underlying Dio instance (for advanced usage)
   Dio get dio => _dio;
 }
-

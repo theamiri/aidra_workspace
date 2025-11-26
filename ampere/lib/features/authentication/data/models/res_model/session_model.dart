@@ -3,15 +3,15 @@ import 'package:ampere/features/authentication/domain/entities/res_entites/sessi
 /// Session model extending the domain entity
 /// Handles JSON serialization for API responses
 /// Note: Sign-in response only contains tokens, user info is fetched separately
-class SessionEnitityModel extends SessionEnitity {
-  const SessionEnitityModel({
+class SessionEntityModel extends SessionEntity {
+  const SessionEntityModel({
     super.accessToken,
     super.refreshToken,
   });
 
   /// Create a SessionModel from a JSON map
-  factory SessionEnitityModel.fromJson(Map<String, dynamic> json) {
-    return SessionEnitityModel(
+  factory SessionEntityModel.fromJson(Map<String, dynamic> json) {
+    return SessionEntityModel(
       accessToken: json['accessToken'] as String?,
       refreshToken: json['refreshToken'] as String?,
     );
@@ -24,8 +24,8 @@ class SessionEnitityModel extends SessionEnitity {
       };
 
   /// Create a SessionModel from the domain entity
-  factory SessionEnitityModel.fromEntity(SessionEnitity entity) {
-    return SessionEnitityModel(
+  factory SessionEntityModel.fromEntity(SessionEntity entity) {
+    return SessionEntityModel(
       accessToken: entity.accessToken,
       refreshToken: entity.refreshToken,
     );

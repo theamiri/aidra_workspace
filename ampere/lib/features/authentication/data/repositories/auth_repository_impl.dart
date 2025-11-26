@@ -1,3 +1,4 @@
+import 'package:ampere/core/config/env_config.dart';
 import 'package:ampere/features/authentication/data/data_sources/local_auth_data_source.dart';
 import 'package:ampere/features/authentication/data/data_sources/remote_auth_data_source.dart';
 import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
@@ -7,21 +8,33 @@ import 'package:ampere/features/authentication/domain/entities/req_entites/signi
 import 'package:ampere/features/authentication/domain/entities/res_entites/session_entity.dart';
 import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
+import 'package:logger/logger.dart';
 
 /// Implementation of AuthRepository
 /// Combines remote and local data sources to provide authentication operations
 class AuthRepositoryImpl implements AuthRepository {
   final RemoteAuthDataSource _remoteDataSource;
   final LocalAuthDataSource _localDataSource;
+  final Logger _logger;
 
   AuthRepositoryImpl({
     required RemoteAuthDataSource remoteDataSource,
     required LocalAuthDataSource localDataSource,
-  }) : _remoteDataSource = remoteDataSource,
-       _localDataSource = localDataSource;
+  })  : _remoteDataSource = remoteDataSource,
+        _localDataSource = localDataSource,
+        _logger = Logger(
+          printer: PrettyPrinter(
+            methodCount: 0,
+            errorMethodCount: 3,
+            lineLength: 120,
+            colors: true,
+            printEmojis: true,
+          ),
+          level: EnvConfig.isProduction ? Level.nothing : Level.error,
+        );
 
   @override
-  Future<SessionEnitity?> signIn(SignInRequestEntity signInRequest) async {
+  Future<SessionEntity?> signIn(SignInRequestEntity signInRequest) async {
     try {
       final signInRequestModel = SignInRequestEntityModel.fromEntity(
         signInRequest,
@@ -62,7 +75,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<SessionEnitity?> refreshToken(String refreshToken) async {
+  Future<SessionEntity?> refreshToken(String refreshToken) async {
     try {
       final sessionResponseModel = await _remoteDataSource.refreshToken(
         refreshToken,
@@ -70,6 +83,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       if (sessionResponseModel != null) {
         // Store new session locally after successful refresh
+        // This implements refresh token rotation: if the server returns a new refresh token,
+        // it will replace the old one, improving security by invalidating the previous token
         await _localDataSource.storeSession(sessionResponseModel);
         return sessionResponseModel;
       }
@@ -83,22 +98,30 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
+      // Attempt to revoke refresh token on server
+      // Note: If your API supports refresh token revocation, you should call it here
+      // Example: await _remoteDataSource.revokeRefreshToken(refreshToken);
       await _remoteDataSource.signOut();
-    } catch (e) {
+    } catch (e, stackTrace) {
       // Log the error but don't throw - we'll still clear local data
       // This ensures logout works even if the server is unreachable
       // or the endpoint doesn't exist
-      print('Remote sign out failed: $e');
+      _logger.e(
+        'Remote sign out failed',
+        error: e,
+        stackTrace: stackTrace,
+      );
     } finally {
       // Always clear all local data, regardless of remote call success
+      // This includes clearing the refresh token, effectively revoking it locally
       await _localDataSource.clearAll();
     }
   }
 
   @override
-  Future<void> storeSession(SessionEnitity session) async {
+  Future<void> storeSession(SessionEntity session) async {
     try {
-      final sessionModel = SessionEnitityModel.fromEntity(session);
+      final sessionModel = SessionEntityModel.fromEntity(session);
       await _localDataSource.storeSession(sessionModel);
     } catch (e) {
       rethrow;
@@ -106,7 +129,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<SessionEnitity?> getStoredSession() async {
+  Future<SessionEntity?> getStoredSession() async {
     try {
       return await _localDataSource.getSession();
     } catch (e) {

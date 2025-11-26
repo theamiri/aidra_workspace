@@ -7,7 +7,6 @@ import 'package:ampere/features/authentication/domain/entities/req_entites/signi
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_event.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_state.dart';
-import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_cubit.dart';
 import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_state.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -32,11 +31,7 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 
   Future<void> _loadSavedCredentials() async {
-    final credentialsCubit = CredentialsCubit(
-      saveCredentialsUseCase: Injection.saveCredentialsUseCase,
-      getCredentialsUseCase: Injection.getCredentialsUseCase,
-      clearCredentialsUseCase: Injection.clearCredentialsUseCase,
-    );
+    final credentialsCubit = Injection.credentialsCubit;
     
     await credentialsCubit.getCredentials();
     final state = credentialsCubit.state;
@@ -67,12 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
 
     // Save credentials if remember me is checked
     if (_rememberMe) {
-      final credentialsCubit = CredentialsCubit(
-        saveCredentialsUseCase: Injection.saveCredentialsUseCase,
-        getCredentialsUseCase: Injection.getCredentialsUseCase,
-        clearCredentialsUseCase: Injection.clearCredentialsUseCase,
-      );
-      await credentialsCubit.saveCredentials(
+      await Injection.credentialsCubit.saveCredentials(
         email: email,
         password: password,
       );

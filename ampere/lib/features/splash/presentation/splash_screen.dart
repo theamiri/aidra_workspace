@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ampere/core/router/routes.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
-import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_event.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_state.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -14,14 +13,8 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Check authentication status when splash screen loads
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<AuthBloc>().add(const CheckAuthenticationEvent());
-    });
-  }
+  // Note: Authentication check is handled in AmpereApp.initState()
+  // This screen only listens to state changes and navigates accordingly
 
   @override
   Widget build(BuildContext context) {

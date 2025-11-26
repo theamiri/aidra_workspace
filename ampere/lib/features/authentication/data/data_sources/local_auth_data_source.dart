@@ -32,7 +32,7 @@ class LocalAuthDataSource {
   /// [session] - The session to store (contains only tokens)
   ///
   /// Throws [CacheException] if storage fails
-  Future<void> storeSession(SessionEnitityModel session) async {
+  Future<void> storeSession(SessionEntityModel session) async {
     try {
       final jsonString = jsonEncode(session.toJson());
       await _sessionStorage.save(value: jsonString);
@@ -43,10 +43,10 @@ class LocalAuthDataSource {
 
   /// Fetch stored session
   ///
-  /// Returns [SessionEnitityModel] if found, null otherwise
+  /// Returns [SessionEntityModel] if found, null otherwise
   ///
   /// Throws [CacheException] if retrieval fails
-  Future<SessionEnitityModel?> getSession() async {
+  Future<SessionEntityModel?> getSession() async {
     try {
       final jsonString = await _sessionStorage.get();
       if (jsonString == null || jsonString.toString().isEmpty) {
@@ -54,7 +54,7 @@ class LocalAuthDataSource {
       }
 
       final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
-      return SessionEnitityModel.fromJson(jsonMap);
+      return SessionEntityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get session');
     }

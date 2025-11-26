@@ -4,6 +4,7 @@ import 'package:ampere/core/errors/failures.dart';
 import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
 import 'package:ampere/features/authentication/domain/repositories/auth_repository.dart';
 import 'package:dartz/dartz.dart';
+import 'package:ampere/core/extensions/exception_failure_extension.dart';
 
 /// Use case for retrieving saved sign-in credentials
 class GetCredentialsUseCase implements UseCase<SignInRequestEntity?, NoParams> {
@@ -19,10 +20,11 @@ class GetCredentialsUseCase implements UseCase<SignInRequestEntity?, NoParams> {
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during get credentials: $e',
-      ));
+      return Left(
+        UnexpectedFailure(
+          message: 'Unexpected error during get credentials: $e',
+        ),
+      );
     }
   }
 }
-
