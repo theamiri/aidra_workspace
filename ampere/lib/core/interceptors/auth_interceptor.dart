@@ -25,20 +25,20 @@ class AuthInterceptor extends Interceptor {
     required ApiClient apiClient,
     required AuthBloc authBloc,
     required AuthRepository authRepository,
-  })  : _refreshTokenUseCase = refreshTokenUseCase,
-        _apiClient = apiClient,
-        _authBloc = authBloc,
-        _authRepository = authRepository,
-        _logger = Logger(
-          printer: PrettyPrinter(
-            methodCount: 0,
-            errorMethodCount: 3,
-            lineLength: 120,
-            colors: true,
-            printEmojis: true,
-          ),
-          level: EnvConfig.isProduction ? Level.nothing : Level.error,
-        );
+  }) : _refreshTokenUseCase = refreshTokenUseCase,
+       _apiClient = apiClient,
+       _authBloc = authBloc,
+       _authRepository = authRepository,
+       _logger = Logger(
+         printer: PrettyPrinter(
+           methodCount: 0,
+           errorMethodCount: 3,
+           lineLength: 120,
+           colors: true,
+           printEmojis: true,
+         ),
+         level: EnvConfig.isProduction ? Level.nothing : Level.error,
+       );
 
   // Endpoints that do NOT trigger refresh
   static const List<String> _excluded = [
@@ -49,7 +49,7 @@ class AuthInterceptor extends Interceptor {
 
   // Only one refresh process at a time
   Future<bool>? _refreshFuture;
-  
+
   // Flag to prevent race conditions when setting/resetting _refreshFuture
   bool _isRefreshing = false;
 
@@ -98,7 +98,7 @@ class AuthInterceptor extends Interceptor {
         error: e,
         stackTrace: stackTrace,
       );
-      
+
       // Return the new error if it's a DioException, otherwise return original
       if (e is DioException) {
         return handler.next(e);

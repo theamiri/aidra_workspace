@@ -34,7 +34,12 @@ class RemoteAuthDataSource {
         return null;
       }
 
-      final jsonData = response.data as Map<String, dynamic>;
+      // Safely convert Map<dynamic, dynamic> to Map<String, dynamic>
+      final dynamic data = response.data;
+      if (data is! Map) {
+        throw FormatException('Expected Map but got ${data.runtimeType}');
+      }
+      final jsonData = _convertToMapStringDynamic(data);
       return SessionEntityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'sign in');
@@ -59,11 +64,38 @@ class RemoteAuthDataSource {
         return null;
       }
 
-      final jsonData = response.data as Map<String, dynamic>;
+      // Safely convert Map<dynamic, dynamic> to Map<String, dynamic>
+      // Handle both Map<dynamic, dynamic> and Map<String, dynamic> cases
+      final dynamic data = response.data;
+      if (data is! Map) {
+        throw FormatException('Expected Map but got ${data.runtimeType}');
+      }
+      
+      // Recursively convert nested maps to ensure all are Map<String, dynamic>
+      final jsonData = _convertToMapStringDynamic(data);
       return UserEntityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'get current user');
     }
+  }
+
+  /// Recursively converts Map<dynamic, dynamic> to Map<String, dynamic>
+  /// Also handles nested maps and lists
+  Map<String, dynamic> _convertToMapStringDynamic(dynamic data) {
+    if (data is Map) {
+      return data.map((key, value) {
+        final String stringKey = key.toString();
+        final dynamic convertedValue = value is Map
+            ? _convertToMapStringDynamic(value)
+            : value is List
+                ? value.map((item) => item is Map
+                    ? _convertToMapStringDynamic(item)
+                    : item).toList()
+                : value;
+        return MapEntry(stringKey, convertedValue);
+      });
+    }
+    throw FormatException('Expected Map but got ${data.runtimeType}');
   }
 
   /// Refresh access token using refresh token
@@ -87,7 +119,12 @@ class RemoteAuthDataSource {
         return null;
       }
 
-      final jsonData = response.data as Map<String, dynamic>;
+      // Safely convert Map<dynamic, dynamic> to Map<String, dynamic>
+      final dynamic data = response.data;
+      if (data is! Map) {
+        throw FormatException('Expected Map but got ${data.runtimeType}');
+      }
+      final jsonData = _convertToMapStringDynamic(data);
       return SessionEntityModel.fromJson(jsonData);
     } catch (e, stackTrace) {
       ErrorHandler.handleRemoteError(e, stackTrace, 'refresh token');

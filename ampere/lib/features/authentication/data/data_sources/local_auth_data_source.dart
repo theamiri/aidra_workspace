@@ -53,7 +53,10 @@ class LocalAuthDataSource {
         return null;
       }
 
-      final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
+      // Safely convert Map<dynamic, dynamic> to Map<String, dynamic>
+      // jsonDecode returns dynamic, which may be Map<dynamic, dynamic>
+      final decoded = jsonDecode(jsonString.toString());
+      final jsonMap = Map<String, dynamic>.from(decoded as Map);
       return SessionEntityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get session');
@@ -99,7 +102,10 @@ class LocalAuthDataSource {
         return null;
       }
 
-      final jsonMap = jsonDecode(jsonString.toString()) as Map<String, dynamic>;
+      // Safely convert Map<dynamic, dynamic> to Map<String, dynamic>
+      // jsonDecode returns dynamic, which may be Map<dynamic, dynamic>
+      final decoded = jsonDecode(jsonString.toString());
+      final jsonMap = Map<String, dynamic>.from(decoded as Map);
       return SignInRequestEntityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get sign-in credentials');
@@ -145,7 +151,10 @@ class LocalAuthDataSource {
         return null;
       }
 
-      return UserEntityModel.fromJson(userJson);
+      // Safely convert Map<dynamic, dynamic> to Map<String, dynamic>
+      // Hive may return Map<dynamic, dynamic> in some cases despite type parameter
+      final jsonMap = Map<String, dynamic>.from(userJson);
+      return UserEntityModel.fromJson(jsonMap);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get user');
     }
