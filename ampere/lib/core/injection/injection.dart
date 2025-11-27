@@ -1,4 +1,5 @@
 import 'package:ampere/core/api/api_client.dart';
+import 'package:ampere/core/api/auth_interceptor.dart';
 import 'package:ampere/core/api/logging_interceptor.dart';
 import 'package:ampere/core/config/env_config.dart';
 import 'package:ampere/core/storage/secure_storage.dart';
@@ -89,6 +90,7 @@ void _registerCoreServices() {
 /// Registers API-related services
 void _registerApiServices() {
   getIt.registerFactory<LoggingInterceptor>(() => LoggingInterceptor());
+  getIt.registerFactory<AuthInterceptor>(() => AuthInterceptor());
 
   getIt.registerLazySingleton<ApiClient>(
     () => ApiClient(
@@ -98,6 +100,7 @@ void _registerApiServices() {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
       },
+      interceptors: [getIt<LoggingInterceptor>(), getIt<AuthInterceptor>()],
     ),
   );
 }

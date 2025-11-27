@@ -18,6 +18,8 @@ class _AmpereAppState extends State<AmpereApp> {
   void initState() {
     super.initState();
     // Check authentication status on app startup
+    // Use Injection.authBloc instead of context.authBloc since BlocProvider
+    // is created in build method, not available in initState
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Injection.authBloc.add(const CheckAuthenticationEvent());
     });

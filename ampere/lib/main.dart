@@ -28,4 +28,3 @@ void main() async {
   // Run the app
   runApp(const AmpereApp());
 }
-
