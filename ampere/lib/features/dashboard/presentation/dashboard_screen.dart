@@ -132,6 +132,14 @@ class DashboardScreen extends StatelessWidget {
                         ),
                       ),
                     const SizedBox(height: 32),
+                    // User email
+                    Text(
+                      user.role?.name ?? 'no role found',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
                     // Logout button
                     ElevatedButton.icon(
                       onPressed: () => _handleLogout(context),

@@ -1,3 +1,4 @@
+import 'package:ampere/core/utils/jwt_utils.dart';
 import 'package:ampere/features/authentication/data/data_sources/local_auth_data_source.dart';
 import 'package:ampere/features/authentication/data/data_sources/remote_auth_data_source.dart';
 import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
@@ -50,9 +51,17 @@ class AuthRepositoryImpl implements AuthRepository {
       final userModel = await _remoteDataSource.getCurrentUser();
 
       if (userModel != null) {
+        // Extract role from JWT token and update only the role field
+        final storedSession = await _localDataSource.getSession();
+        final userWithRole = storedSession?.accessToken != null
+            ? userModel.copyWithRole(
+                JwtUtils.extractRole(storedSession!.accessToken!),
+              )
+            : userModel;
+
         // Store user locally after successful fetch
-        await _localDataSource.storeUser(userModel);
-        return userModel;
+        await _localDataSource.storeUser(userWithRole);
+        return userWithRole;
       }
 
       return null;
@@ -83,15 +92,9 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
-      await _remoteDataSource.signOut();
-    } catch (e) {
-      // Log the error but don't throw - we'll still clear local data
-      // This ensures logout works even if the server is unreachable
-      // or the endpoint doesn't exist
-      print('Remote sign out failed: $e');
-    } finally {
-      // Always clear all local data, regardless of remote call success
       await _localDataSource.clearAll();
+    } catch (e) {
+      rethrow;
     }
   }
 

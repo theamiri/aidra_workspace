@@ -62,5 +62,20 @@ class UserEntityModel extends UserEntity {
       role: entity.role,
     );
   }
+
+  /// Creates a copy with updated role
+  UserEntityModel copyWithRole(Role? role) {
+    return UserEntityModel(
+      id: id,
+      email: email,
+      firstname: firstname,
+      lastname: lastname,
+      phoneNumber: phoneNumber,
+      profilePictureUrl: profilePictureUrl,
+      clientId: clientId,
+      siteId: siteId,
+      role: role ?? this.role,
+    );
+  }
 }
 
