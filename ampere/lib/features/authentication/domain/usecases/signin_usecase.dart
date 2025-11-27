@@ -24,7 +24,6 @@ class SignInUseCase implements UseCase<SessionEnitity, SignInRequestEntity> {
           ServerFailure(message: 'Sign in failed: Empty response from server'),
         );
       }
-
       return Right(sessionResponse);
     } on AppException catch (e) {
       return Left(e.toFailure());

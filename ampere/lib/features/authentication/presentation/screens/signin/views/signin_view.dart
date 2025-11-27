@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
-import 'package:ampere/core/injection/injection.dart';
-import 'package:ampere/core/router/routes.dart';
 import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_event.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_state.dart';
-import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_cubit.dart';
-import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_state.dart';
 import 'package:ampere/features/authentication/presentation/screens/signin/widgets/signin_button.dart';
 import 'package:ampere/features/authentication/presentation/screens/signin/widgets/signin_email_field.dart';
 import 'package:ampere/features/authentication/presentation/screens/signin/widgets/signin_error_display.dart';
-import 'package:ampere/features/authentication/presentation/screens/signin/widgets/signin_header.dart';
 import 'package:ampere/features/authentication/presentation/screens/signin/widgets/signin_password_field.dart';
-import 'package:ampere/features/authentication/presentation/screens/signin/widgets/signin_remember_me_and_forgot_password.dart';
 
 /// Sign in view - main screen for user authentication
 class SignInView extends StatefulWidget {

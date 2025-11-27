@@ -1,10 +1,10 @@
 import 'dart:convert';
-import 'package:ampere/core/storage/hive_client.dart';
 import 'package:ampere/core/storage/secure_storage.dart';
 import 'package:ampere/core/utils/error_handler.dart';
 import 'package:ampere/features/authentication/data/models/req_model/signin_request_model.dart';
 import 'package:ampere/features/authentication/data/models/res_model/session_model.dart';
 import 'package:ampere/features/authentication/data/models/res_model/user_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Local data source for authentication data
 /// Handles storing and fetching session and sign-in credentials
@@ -12,20 +12,18 @@ class LocalAuthDataSource {
   // Storage keys
   static const String _sessionResponseKey = 'session_response';
   static const String _signInCredentialsKey = 'signin_credentials';
-  static const String _userBoxName = 'user_box';
   static const String _userKey = 'user';
 
   // Secure storage instances (for sensitive data)
   final SecureStorage _sessionStorage;
   final SecureStorage _credentialsStorage;
 
-  // Hive client for non-sensitive user data
-  final HiveClient<Map<String, dynamic>> _userHiveClient;
+  // SharedPreferences instance for non-sensitive user data
+  Future<SharedPreferences> get _prefs => SharedPreferences.getInstance();
 
   LocalAuthDataSource()
     : _sessionStorage = SecureStorage(key: _sessionResponseKey),
-      _credentialsStorage = SecureStorage(key: _signInCredentialsKey),
-      _userHiveClient = HiveClient<Map<String, dynamic>>(_userBoxName);
+      _credentialsStorage = SecureStorage(key: _signInCredentialsKey);
 
   /// Store session (access token and refresh token)
   ///
@@ -124,9 +122,9 @@ class LocalAuthDataSource {
   /// Throws [CacheException] if storage fails
   Future<void> storeUser(UserEntityModel user) async {
     try {
-      await _userHiveClient.init();
-      final userJson = user.toJson();
-      await _userHiveClient.put(_userKey, userJson);
+      final prefs = await _prefs;
+      final userJson = jsonEncode(user.toJson());
+      await prefs.setString(_userKey, userJson);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'store user');
     }
@@ -139,12 +137,13 @@ class LocalAuthDataSource {
   /// Throws [CacheException] if retrieval fails
   Future<UserEntityModel?> getUser() async {
     try {
-      await _userHiveClient.init();
-      final userJson = await _userHiveClient.get(_userKey);
-      if (userJson == null) {
+      final prefs = await _prefs;
+      final userJsonString = prefs.getString(_userKey);
+      if (userJsonString == null || userJsonString.isEmpty) {
         return null;
       }
 
+      final userJson = jsonDecode(userJsonString) as Map<String, dynamic>;
       return UserEntityModel.fromJson(userJson);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'get user');
@@ -156,8 +155,8 @@ class LocalAuthDataSource {
   /// Throws [CacheException] if deletion fails
   Future<void> clearUser() async {
     try {
-      await _userHiveClient.init();
-      await _userHiveClient.delete(_userKey);
+      final prefs = await _prefs;
+      await prefs.remove(_userKey);
     } catch (e, stackTrace) {
       ErrorHandler.handleLocalError(e, stackTrace, 'clear user');
     }

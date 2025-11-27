@@ -10,7 +10,6 @@ import 'package:ampere/features/authentication/domain/repositories/auth_reposito
 import 'package:ampere/features/authentication/domain/usecases/check_authentication_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/get_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/refresh_token_usecase.dart';
-import 'package:ampere/features/authentication/domain/usecases/save_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/signin_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/signout_usecase.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
@@ -45,10 +44,6 @@ class Injection {
   /// Gets the RefreshTokenUseCase instance
   static RefreshTokenUseCase get refreshTokenUseCase =>
       getIt<RefreshTokenUseCase>();
-
-  /// Gets the SaveCredentialsUseCase instance
-  static SaveCredentialsUseCase get saveCredentialsUseCase =>
-      getIt<SaveCredentialsUseCase>();
 
   /// Gets the GetCredentialsUseCase instance
   static GetCredentialsUseCase get getCredentialsUseCase =>
@@ -148,10 +143,6 @@ void _registerUseCases() {
 
   getIt.registerLazySingleton<RefreshTokenUseCase>(
     () => RefreshTokenUseCase(authRepository),
-  );
-
-  getIt.registerLazySingleton<SaveCredentialsUseCase>(
-    () => SaveCredentialsUseCase(authRepository),
   );
 
   getIt.registerLazySingleton<GetCredentialsUseCase>(
