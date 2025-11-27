@@ -35,12 +35,11 @@ class _SignInScreenState extends State<SignInScreen> {
     final credentialsCubit = CredentialsCubit(
       saveCredentialsUseCase: Injection.saveCredentialsUseCase,
       getCredentialsUseCase: Injection.getCredentialsUseCase,
-      clearCredentialsUseCase: Injection.clearCredentialsUseCase,
     );
-    
+
     await credentialsCubit.getCredentials();
     final state = credentialsCubit.state;
-    
+
     if (state is CredentialsLoaded && state.credentials != null) {
       setState(() {
         _emailController.text = state.credentials!.email;
@@ -70,19 +69,12 @@ class _SignInScreenState extends State<SignInScreen> {
       final credentialsCubit = CredentialsCubit(
         saveCredentialsUseCase: Injection.saveCredentialsUseCase,
         getCredentialsUseCase: Injection.getCredentialsUseCase,
-        clearCredentialsUseCase: Injection.clearCredentialsUseCase,
       );
-      await credentialsCubit.saveCredentials(
-        email: email,
-        password: password,
-      );
+      await credentialsCubit.saveCredentials(email: email, password: password);
     }
 
     // Sign in using AuthBloc
-    final signInRequest = SignInRequestEntity(
-      email: email,
-      password: password,
-    );
+    final signInRequest = SignInRequestEntity(email: email, password: password);
 
     context.read<AuthBloc>().add(SignInEvent(signInRequest));
   }
@@ -96,10 +88,7 @@ class _SignInScreenState extends State<SignInScreen> {
           context.go(Routes.dashboard.route);
         } else if (state is AuthenticationError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: Colors.red,
-            ),
+            SnackBar(content: Text(state.message), backgroundColor: Colors.red),
           );
         }
       },
@@ -113,7 +102,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(height: 60.0),
-                  
+
                   // Logo/App Name
                   const Icon(
                     Icons.lock_outline,
@@ -121,25 +110,19 @@ class _SignInScreenState extends State<SignInScreen> {
                     color: Colors.deepPurple,
                   ),
                   const SizedBox(height: 24.0),
-                  
+
                   // Title
                   const Text(
                     'Welcome Back',
-                    style: TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8.0),
-                  
+
                   // Subtitle
                   Text(
                     'Sign in to continue',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.grey[600],
-                    ),
+                    style: TextStyle(fontSize: 16, color: Colors.grey[600]),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 48.0),
@@ -233,7 +216,9 @@ class _SignInScreenState extends State<SignInScreen> {
                           // TODO: Implement forgot password
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('Forgot password feature coming soon'),
+                              content: Text(
+                                'Forgot password feature coming soon',
+                              ),
                             ),
                           );
                         },
@@ -247,7 +232,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   BlocBuilder<AuthBloc, AuthState>(
                     builder: (context, state) {
                       final isAuthenticating = state is Authenticating;
-                      
+
                       return ElevatedButton(
                         onPressed: isAuthenticating ? null : _handleSignIn,
                         style: ElevatedButton.styleFrom(

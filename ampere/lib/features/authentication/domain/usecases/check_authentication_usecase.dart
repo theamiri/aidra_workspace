@@ -7,23 +7,21 @@ import 'package:dartz/dartz.dart';
 
 /// Use case for checking if user is authenticated
 /// Returns the authenticated user if found, otherwise returns a failure
-class CheckAuthenticationUseCase implements UseCase<UserEntity, NoParams> {
+class CheckAuthenticationUseCase implements UseCase<UserEntity?, NoParams> {
   final AuthRepository _repository;
 
   CheckAuthenticationUseCase(this._repository);
 
   @override
-  Future<Either<Failure, UserEntity>> call(NoParams params) async {
+  Future<Either<Failure, UserEntity?>> call(NoParams params) async {
     try {
       // First check if we have a stored session
       final storedSession = await _repository.getStoredSession();
-      
-      if (storedSession == null || 
-          storedSession.accessToken == null || 
+
+      if (storedSession == null ||
+          storedSession.accessToken == null ||
           storedSession.accessToken!.isEmpty) {
-        return Left(AuthenticationFailure(
-          message: 'No active session found',
-        ));
+        return right(null);
       }
 
       // Try to get stored user first
@@ -34,21 +32,22 @@ class CheckAuthenticationUseCase implements UseCase<UserEntity, NoParams> {
 
       // If no stored user, try to fetch from API
       final currentUser = await _repository.getCurrentUser();
-      
+
       if (currentUser == null) {
-        return Left(AuthenticationFailure(
-          message: 'User not found or not authenticated',
-        ));
+        return Left(
+          AuthenticationFailure(message: 'User not found or not authenticated'),
+        );
       }
 
       return Right(currentUser);
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during authentication check: $e',
-      ));
+      return Left(
+        UnexpectedFailure(
+          message: 'Unexpected error during authentication check: $e',
+        ),
+      );
     }
   }
 }
-

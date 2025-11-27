@@ -19,10 +19,9 @@ class SaveCredentialsUseCase implements UseCase<void, SignInRequestEntity> {
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during save credentials: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during save credentials'),
+      );
     }
   }
 }
-

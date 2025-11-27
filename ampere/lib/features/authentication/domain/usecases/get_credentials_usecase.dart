@@ -19,10 +19,9 @@ class GetCredentialsUseCase implements UseCase<SignInRequestEntity?, NoParams> {
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during get credentials: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during get credentials'),
+      );
     }
   }
 }
-

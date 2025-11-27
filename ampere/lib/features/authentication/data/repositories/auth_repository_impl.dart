@@ -27,16 +27,14 @@ class AuthRepositoryImpl implements AuthRepository {
       final signInRequestModel = SignInRequestEntityModel.fromEntity(
         signInRequest,
       );
-      final sessionResponseModel = await _remoteDataSource.signIn(
-        signInRequestModel,
-      );
+      final sessionModel = await _remoteDataSource.signIn(signInRequestModel);
 
-      if (sessionResponseModel != null) {
+      if (sessionModel != null) {
         // Store session locally after successful sign-in
-        await _localDataSource.storeSession(sessionResponseModel);
+        await _localDataSource.storeSession(sessionModel);
         // Store credentials for future use
         await _localDataSource.storeSignInCredentials(signInRequestModel);
-        return sessionResponseModel;
+        return sessionModel;
       }
 
       return null;
@@ -140,15 +138,6 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<SignInRequestEntity?> getStoredSignInCredentials() async {
     try {
       return await _localDataSource.getSignInCredentials();
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  @override
-  Future<void> clearSignInCredentials() async {
-    try {
-      await _localDataSource.clearSignInCredentials();
     } catch (e) {
       rethrow;
     }

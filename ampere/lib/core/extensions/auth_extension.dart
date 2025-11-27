@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ampere/core/injection/injection.dart';
 import 'package:ampere/features/authentication/domain/entities/res_entites/user_entity.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_bloc.dart';
 import 'package:ampere/features/authentication/presentation/logic/auth_bloc/auth_state.dart';
@@ -33,19 +32,3 @@ extension AuthExtension on BuildContext {
   }
 }
 
-/// Global helper to access AuthBloc without BuildContext
-/// Use this when you don't have access to BuildContext
-class AuthHelper {
-  /// Get the AuthBloc instance
-  static AuthBloc get bloc => Injection.authBloc;
-
-  /// Get the current authenticated user
-  /// Returns null if not authenticated
-  static UserEntity? get currentUser => Injection.authBloc.currentUser;
-
-  /// Check if user is authenticated
-  static bool get isAuthenticated => Injection.authBloc.isAuthenticated;
-
-  /// Get the current authentication state
-  static AuthState get state => Injection.authBloc.state;
-}

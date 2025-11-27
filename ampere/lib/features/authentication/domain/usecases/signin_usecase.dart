@@ -13,24 +13,25 @@ class SignInUseCase implements UseCase<SessionEnitity, SignInRequestEntity> {
   SignInUseCase(this._repository);
 
   @override
-  Future<Either<Failure, SessionEnitity>> call(SignInRequestEntity params) async {
+  Future<Either<Failure, SessionEnitity>> call(
+    SignInRequestEntity params,
+  ) async {
     try {
       final sessionResponse = await _repository.signIn(params);
-      
+
       if (sessionResponse == null) {
-        return Left(ServerFailure(
-          message: 'Sign in failed: Empty response from server',
-        ));
+        return Left(
+          ServerFailure(message: 'Sign in failed: Empty response from server'),
+        );
       }
 
       return Right(sessionResponse);
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during sign in: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during sign in'),
+      );
     }
   }
 }
-

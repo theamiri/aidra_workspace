@@ -18,10 +18,9 @@ class SignOutUseCase implements UseCase<void, NoParams> {
     } on AppException catch (e) {
       return Left(e.toFailure());
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'Unexpected error during sign out: $e',
-      ));
+      return Left(
+        UnexpectedFailure(message: 'Unexpected error during sign out'),
+      );
     }
   }
 }
-

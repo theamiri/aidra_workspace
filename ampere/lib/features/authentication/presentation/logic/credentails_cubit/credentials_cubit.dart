@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ampere/core/errors/failures.dart';
 import 'package:ampere/core/shared/use_case.dart';
 import 'package:ampere/features/authentication/domain/entities/req_entites/signin_request_entity.dart';
-import 'package:ampere/features/authentication/domain/usecases/clear_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/get_credentials_usecase.dart';
 import 'package:ampere/features/authentication/domain/usecases/save_credentials_usecase.dart';
 import 'package:ampere/features/authentication/presentation/logic/credentails_cubit/credentials_state.dart';
@@ -11,15 +10,13 @@ import 'package:ampere/features/authentication/presentation/logic/credentails_cu
 class CredentialsCubit extends Cubit<CredentialsState> {
   final SaveCredentialsUseCase _saveCredentialsUseCase;
   final GetCredentialsUseCase _getCredentialsUseCase;
-  final ClearCredentialsUseCase _clearCredentialsUseCase;
 
   CredentialsCubit({
     required SaveCredentialsUseCase saveCredentialsUseCase,
     required GetCredentialsUseCase getCredentialsUseCase,
-    required ClearCredentialsUseCase clearCredentialsUseCase,
   }) : _saveCredentialsUseCase = saveCredentialsUseCase,
        _getCredentialsUseCase = getCredentialsUseCase,
-       _clearCredentialsUseCase = clearCredentialsUseCase,
+
        super(const CredentialsInitial());
 
   /// Save email and password credentials
@@ -58,22 +55,6 @@ class CredentialsCubit extends Cubit<CredentialsState> {
       },
       (credentials) {
         emit(CredentialsLoaded(credentials));
-      },
-    );
-  }
-
-  /// Clear saved credentials
-  Future<void> clearCredentials() async {
-    emit(const CredentialsLoading());
-
-    final result = await _clearCredentialsUseCase(NoParams());
-
-    result.fold(
-      (failure) {
-        emit(CredentialsError(_getErrorMessage(failure)));
-      },
-      (_) {
-        emit(const CredentialsCleared());
       },
     );
   }
