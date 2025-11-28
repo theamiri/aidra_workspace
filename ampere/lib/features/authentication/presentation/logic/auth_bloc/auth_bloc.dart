@@ -38,7 +38,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     result.fold(
       (l) {
-        emit(AuthenticationError(_getErrorMessage(result as Failure)));
+        emit(AuthenticationError(_getErrorMessage(l)));
       },
       (r) {
         add(CheckAuthenticationEvent());
